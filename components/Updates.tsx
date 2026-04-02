@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useAppStore } from '@/lib/store';
 
 type BadgeType = 'new' | 'improve' | 'fix';
 
@@ -15,36 +16,54 @@ interface UpdatesProps {
   items?: UpdateItem[];
 }
 
-const BadgeComponent: React.FC<{ type: BadgeType }> = ({ type }) => {
-  const getBadgeStyles = (type: BadgeType) => {
+const BadgeComponent: React.FC<{ type: BadgeType; isDark: boolean }> = ({ type, isDark }) => {
+  const getBadgeStyles = (type: BadgeType, isDark: boolean) => {
     switch (type) {
       case 'new':
-        return {
-          background: 'rgba(0, 217, 255, 0.1)',
-          color: 'var(--accent-cyan)',
-          border: '1.5px solid rgba(0, 217, 255, 0.3)',
-        };
+        return isDark
+          ? {
+              background: 'rgba(0, 217, 255, 0.1)',
+              color: 'var(--accent-cyan)',
+              border: '1.5px solid rgba(0, 217, 255, 0.3)',
+            }
+          : {
+              background: 'rgba(0, 153, 187, 0.08)',
+              color: 'var(--accent-cyan)',
+              border: '1.5px solid rgba(0, 153, 187, 0.25)',
+            };
       case 'improve':
-        return {
-          background: 'rgba(120,180,255,0.1)',
-          color: '#7bb8ff',
-          border: '1px solid rgba(120,180,255,0.25)',
-        };
+        return isDark
+          ? {
+              background: 'rgba(120,180,255,0.1)',
+              color: '#7bb8ff',
+              border: '1px solid rgba(120,180,255,0.25)',
+            }
+          : {
+              background: 'rgba(0, 82, 204, 0.1)',
+              color: '#0052cc',
+              border: '1px solid rgba(0, 82, 204, 0.25)',
+            };
       case 'fix':
-        return {
-          background: 'rgba(255,180,100,0.1)',
-          color: '#ffa850',
-          border: '1px solid rgba(255,180,100,0.2)',
-        };
+        return isDark
+          ? {
+              background: 'rgba(255,180,100,0.1)',
+              color: '#ffa850',
+              border: '1px solid rgba(255,180,100,0.2)',
+            }
+          : {
+              background: 'rgba(184, 134, 11, 0.1)',
+              color: '#b8860b',
+              border: '1px solid rgba(184, 134, 11, 0.25)',
+            };
     }
   };
 
   const label = type === 'new' ? 'In Progress' : type === 'improve' ? 'Improved' : 'Fixed';
-  const styles = getBadgeStyles(type);
+  const styles = getBadgeStyles(type, isDark);
 
   return (
     <span
-      className="font-mono text-xs uppercase tracking-widest px-2.5 py-1 rounded whitespace-nowrap"
+      className="font-mono text-xs uppercase tracking-widest px-2.5 py-1 rounded whitespace-nowrap transition-all duration-300"
       style={{
         ...styles,
         letterSpacing: '0.1em',
@@ -72,15 +91,18 @@ const Updates: React.FC<UpdatesProps> = ({
     },
   ],
 }) => {
+  const { theme } = useAppStore();
+
+  const isDark = theme === 'dark';
+
   return (
     <section
       id="updates"
-      className="py-16 md:py-24 px-4 md:px-8 lg:px-12 border-t relative z-10"
+      className="py-16 md:py-24 px-4 md:px-8 lg:px-12 border-t relative z-10 transition-all duration-500"
       style={{
-        borderColor: '1.5px solid var(--glass-border)',
+        borderColor: 'var(--glass-border)',
       }}>
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="mb-8 md:mb-12 reveal">
           <p
             className="font-mono text-xs uppercase tracking-widest mb-4"
@@ -98,56 +120,47 @@ const Updates: React.FC<UpdatesProps> = ({
               lineHeight: 1.1,
               color: 'var(--text)',
             }}>
-            What's new in
+            Real-time research
             <br />
-            <em style={{ color: 'var(--accent-yellow)', fontStyle: 'normal' }}>GenPilot.</em>
+            at the <em style={{ color: 'var(--accent-yellow)', fontStyle: 'normal' }}>frontier.</em>
           </h2>
         </div>
 
-        {/* Updates List */}
-        <div className="flex flex-col reveal">
+        <div className="flex flex-col gap-6">
           {items.map((item, index) => (
             <div
               key={index}
-              className="grid gap-4 md:gap-8 items-start py-6 md:py-7 px-0"
+              className="p-6 md:p-8 rounded-xl reveal transition-all duration-300"
               style={{
-                gridTemplateColumns: 'auto 1fr auto',
-                borderBottom: index === items.length - 1 ? 'none' : '1px solid rgba(0, 255, 140, 0.08)',
+                background: 'var(--glass-bg)',
+                border: '1.5px solid var(--glass-border)',
+                backdropFilter: 'blur(15px)',
               }}>
-              {/* Left Column: Date */}
-              <div
-                className="font-mono text-xs uppercase tracking-widest pt-0.5"
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-3">
+                <div>
+                  <div className="inline-block font-mono text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--text-muted)' }}>
+                    {item.date}
+                  </div>
+                  <h3
+                    className="font-sans font-semibold"
+                    style={{
+                      fontSize: '1.1rem',
+                      color: 'var(--text)',
+                    }}>
+                    {item.title}
+                  </h3>
+                </div>
+                <BadgeComponent type={item.badge} isDark={isDark} />
+              </div>
+              <p
+                className="font-light"
                 style={{
+                  fontSize: '0.95rem',
+                  lineHeight: 1.6,
                   color: 'var(--text-muted)',
-                  letterSpacing: '0.1em',
                 }}>
-                {item.date}
-              </div>
-
-              {/* Info */}
-              <div>
-                <h4
-                  className="font-sans font-semibold mb-1.5"
-                  style={{
-                    fontSize: '0.95rem',
-                    color: 'var(--text)',
-                  }}>
-                  {item.title}
-                </h4>
-                <p
-                  className="font-light"
-                  style={{
-                    fontSize: '0.85rem',
-                    color: 'var(--text-muted)',
-                    fontWeight: 300,
-                    lineHeight: 1.5,
-                  }}>
-                  {item.description}
-                </p>
-              </div>
-
-              {/* Badge */}
-              <BadgeComponent type={item.badge} />
+                {item.description}
+              </p>
             </div>
           ))}
         </div>

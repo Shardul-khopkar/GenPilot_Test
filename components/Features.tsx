@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useAppStore } from '@/lib/store';
 
 interface FeatureData {
   title: string;
@@ -11,53 +12,60 @@ interface FeaturesProps {
   features?: FeatureData[];
 }
 
-const FeatureCard: React.FC<{ title: string; description: string }> = ({ title, description }) => (
-  <div
-    className="p-6 md:p-8 rounded-xl reveal transition-all duration-300 hover:cursor-default"
-    style={{
-      background: 'var(--glass-bg)',
-      border: '1.5px solid var(--glass-border)',
-      backdropFilter: 'blur(20px)',
-      boxShadow: '0 4px 20px rgba(0, 102, 255, 0.1)',
-    }}
-    onMouseEnter={(e) => {
-      (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0, 102, 255, 0.5)';
-      (e.currentTarget as HTMLElement).style.background = 'rgba(20, 30, 80, 0.4)';
-      (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 35px rgba(0, 102, 255, 0.2)';
-    }}
-    onMouseLeave={(e) => {
-      (e.currentTarget as HTMLElement).style.borderColor = 'var(--glass-border)';
-      (e.currentTarget as HTMLElement).style.background = 'var(--glass-bg)';
-      (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(0, 102, 255, 0.1)';
-    }}>
+const FeatureCard: React.FC<{ title: string; description: string; isDark: boolean }> = ({ title, description, isDark }) => {
+  const hoverBg = isDark ? 'rgba(20, 30, 80, 0.4)' : 'rgba(255, 255, 255, 0.75)';
+  const hoverBorder = isDark ? 'rgba(0, 82, 204, 0.35)' : 'rgba(0, 82, 204, 0.35)';
+  const hoverShadow = isDark ? '0 8px 35px rgba(0, 82, 204, 0.15)' : '0 8px 35px rgba(0, 82, 204, 0.15)';
+  const normalShadow = isDark ? '0 4px 20px rgba(0, 82, 204, 0.08)' : '0 4px 20px rgba(0, 82, 204, 0.08)';
+
+  return (
     <div
-      className="w-10 h-10 rounded-lg flex items-center justify-center mb-5 text-lg"
+      className="p-6 md:p-8 rounded-xl reveal transition-all duration-300 hover:cursor-default"
       style={{
-        background: 'rgba(0, 102, 255, 0.15)',
-        border: '1.5px solid rgba(0, 102, 255, 0.3)',
-        color: 'var(--accent-cyan)',
+        background: 'var(--glass-bg)',
+        border: '1.5px solid var(--glass-border)',
+        backdropFilter: 'blur(20px)',
+        boxShadow: normalShadow,
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = hoverBorder;
+        (e.currentTarget as HTMLElement).style.background = hoverBg;
+        (e.currentTarget as HTMLElement).style.boxShadow = hoverShadow;
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.borderColor = 'var(--glass-border)';
+        (e.currentTarget as HTMLElement).style.background = 'var(--glass-bg)';
+        (e.currentTarget as HTMLElement).style.boxShadow = normalShadow;
       }}>
-      ⚡
+      <div
+        className="w-10 h-10 rounded-lg flex items-center justify-center mb-5 text-lg transition-all duration-300"
+        style={{
+          background: isDark ? 'rgba(0, 82, 204, 0.15)' : 'rgba(0, 82, 204, 0.12)',
+          border: isDark ? '1.5px solid rgba(0, 82, 204, 0.3)' : '1.5px solid rgba(0, 82, 204, 0.25)',
+          color: 'var(--accent-cyan)',
+        }}>
+        ⚡
+      </div>
+      <h3
+        className="font-sans font-semibold mb-2.5 transition-all duration-300"
+        style={{
+          fontSize: '0.95rem',
+          color: 'var(--text)',
+        }}>
+        {title}
+      </h3>
+      <p
+        className="font-light transition-all duration-300"
+        style={{
+          fontSize: '0.85rem',
+          lineHeight: 1.65,
+          color: 'var(--text-muted)',
+        }}>
+        {description}
+      </p>
     </div>
-    <h3
-      className="font-sans font-semibold mb-2.5"
-      style={{
-        fontSize: '0.95rem',
-        color: 'var(--text)',
-      }}>
-      {title}
-    </h3>
-    <p
-      className="font-light"
-      style={{
-        fontSize: '0.85rem',
-        lineHeight: 1.65,
-        color: 'var(--text-muted)',
-      }}>
-      {description}
-    </p>
-  </div>
-);
+  );
+};
 
 const Features: React.FC<FeaturesProps> = ({
   features = [
@@ -79,22 +87,29 @@ const Features: React.FC<FeaturesProps> = ({
     {
       title: 'Mismatch Detection',
       description:
-        'Automatically surface sequence mismatches that could compromise edit fidelity, with suggested corrections inline.',
+        'Automatically scan for off-target homology and warn about problematic regions in your selected genomic neighborhood.',
     },
     {
-      title: 'GC Content & Repeat Analysis',
+      title: 'PAM Site Finding',
       description:
-        'Get instant readouts on GC percentage and repeat element density — critical factors for successful transfection.',
+        'Instantly locate all PAM sites in a given coordinate range, filtered by CRISPR system (SpCas9, SaCas9, Cas12a, etc.).',
     },
     {
-      title: 'Blacklisted Region Flags',
+      title: 'Structured Export',
       description:
-        'GenPilot automatically identifies ENCODE-defined blacklisted chromatin regions and warns before you proceed.',
+        'Download results as JSON, CSV, or FASTA. Seamlessly integrate analysis into your pipeline and lab management systems.',
     },
   ],
 }) => {
+  const { theme } = useAppStore();
+
+  const isDark = theme === 'dark';
+
   return (
-    <section id="features" className="py-16 md:py-24 px-4 md:px-8 lg:px-12 border-t relative z-10" style={{ borderColor: 'var(--glass-border)' }}>
+    <section
+      id="features"
+      className="py-16 md:py-24 px-4 md:px-8 lg:px-12 border-t relative z-10 transition-all duration-500"
+      style={{ borderColor: 'var(--glass-border)' }}>
       <div className="max-w-6xl mx-auto">
         <div className="mb-12 md:mb-14 reveal">
           <p
@@ -103,8 +118,9 @@ const Features: React.FC<FeaturesProps> = ({
               color: 'var(--primary-blue)',
               letterSpacing: '0.18em',
             }}>
-            // Core features
+            // Superpowers
           </p>
+
           <h2
             className="font-sans font-bold"
             style={{
@@ -112,8 +128,11 @@ const Features: React.FC<FeaturesProps> = ({
               letterSpacing: '-0.03em',
               lineHeight: 1.1,
               color: 'var(--text)',
+              marginBottom: '24px',
             }}>
-            Everything your
+            Everything you need for
+            <br />
+            every step of your CRISPR
             <br />
             lab workflow <em style={{ color: 'var(--accent-yellow)', fontStyle: 'normal' }}>needs.</em>
           </h2>
@@ -121,7 +140,7 @@ const Features: React.FC<FeaturesProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
           {features.map((feature, index) => (
-            <FeatureCard key={index} title={feature.title} description={feature.description} />
+            <FeatureCard key={index} title={feature.title} description={feature.description} isDark={isDark} />
           ))}
         </div>
       </div>

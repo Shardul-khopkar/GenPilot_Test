@@ -78,20 +78,30 @@ genpilot-next/
 
 ## Features
 
-- Responsive glass morphism UI with blue/cyan/yellow color scheme
+- **Theme Support**: Complete light/dark theme system with persistent localStorage preference
+- **Floating Theme Toggle**: Always-visible emoji toggle (🌙/☀️) at bottom-right of screen
+- Responsive glass morphism UI with theme-aware colors
 - Real-time API mock showcase for CRISPR analysis
 - Comprehensive technical documentation
 - Early access request form
 - Contact integration with SolveArn
 - Animated DNA loading sequences
-- Dark theme optimized for developers
+- Smooth 0.5s theme transitions across all components
 
 ## Styling
 
-- **Primary Blue**: #0066ff
-- **Accent Cyan**: #00d9ff
+### Theme System
+- **Light Theme**: Black text (#0d1117), white backgrounds (#f4f7fb) with light blue gradient
+- **Dark Theme**: White text (#ffffff), black background (#000000) with dark blue gradient
+- **Theme Toggle**: Click the floating emoji button at bottom-right to switch themes
+- **Persistence**: Theme preference saved to localStorage and survives page reloads
+
+### Colors
+- **Light Primary Blue**: #0052cc
+- **Dark Primary Blue**: #0066ff
+- **Accent Cyan**: Light (#0099bb) / Dark (#00d9ff)
 - **Accent Yellow**: #ffd700
-- **Glass Morphism**: 30px blur with semi-transparent backgrounds
+- **Glass Morphism**: 30px blur with semi-transparent backgrounds (theme-aware)
 - **Typography**: Sora (sans-serif), Space Mono (monospace)
 
 ## API Integration

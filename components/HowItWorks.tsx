@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useAppStore } from '@/lib/store';
 
 interface StepData {
   number: string;
@@ -12,58 +13,66 @@ interface HowItWorksProps {
   steps?: StepData[];
 }
 
-const StepCard: React.FC<{ number: string; title: string; description: string }> = ({
+const StepCard: React.FC<{ number: string; title: string; description: string; isDark: boolean }> = ({
   number,
   title,
   description,
-}) => (
-  <div
-    className="p-6 md:p-8 lg:p-10 relative reveal transition-all duration-300 hover:cursor-default"
-    style={{
-      background: 'var(--glass-bg)',
-      border: '1.5px solid var(--glass-border)',
-      backdropFilter: 'blur(15px)',
-      boxShadow: '0 4px 20px rgba(0, 102, 255, 0.1)',
-    }}
-    onMouseEnter={(e) => {
-      (e.currentTarget as HTMLElement).style.background = 'rgba(20, 30, 80, 0.4)';
-      (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0, 102, 255, 0.4)';
-      (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 30px rgba(0, 102, 255, 0.2)';
-    }}
-    onMouseLeave={(e) => {
-      (e.currentTarget as HTMLElement).style.background = 'var(--glass-bg)';
-      (e.currentTarget as HTMLElement).style.borderColor = 'var(--glass-border)';
-      (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(0, 102, 255, 0.1)';
-    }}>
+  isDark,
+}) => {
+  const hoverBg = isDark ? 'rgba(20, 30, 80, 0.4)' : 'rgba(255, 255, 255, 0.75)';
+  const hoverBorder = isDark ? 'rgba(0, 102, 255, 0.4)' : 'rgba(0, 82, 204, 0.35)';
+  const hoverShadow = isDark ? '0 8px 30px rgba(0, 102, 255, 0.2)' : '0 8px 30px rgba(0, 82, 204, 0.15)';
+  const normalShadow = isDark ? '0 4px 20px rgba(0, 102, 255, 0.1)' : '0 4px 20px rgba(0, 82, 204, 0.08)';
+  
+  return (
     <div
-      className="font-mono font-bold mb-5"
+      className="p-6 md:p-8 lg:p-10 relative reveal transition-all duration-300 hover:cursor-default"
       style={{
-        fontSize: 'clamp(2rem, 5vw, 3rem)',
-        color: 'rgba(0, 102, 255, 0.15)',
-        lineHeight: 1,
-        letterSpacing: '-0.04em',
+        background: 'var(--glass-bg)',
+        border: '1.5px solid var(--glass-border)',
+        backdropFilter: 'blur(15px)',
+        boxShadow: normalShadow,
+      }}
+      onMouseEnter={(e) => {
+        (e.currentTarget as HTMLElement).style.background = hoverBg;
+        (e.currentTarget as HTMLElement).style.borderColor = hoverBorder;
+        (e.currentTarget as HTMLElement).style.boxShadow = hoverShadow;
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLElement).style.background = 'var(--glass-bg)';
+        (e.currentTarget as HTMLElement).style.borderColor = 'var(--glass-border)';
+        (e.currentTarget as HTMLElement).style.boxShadow = normalShadow;
       }}>
-      {number}
+      <div
+        className="font-mono font-bold mb-5"
+        style={{
+          fontSize: 'clamp(2rem, 5vw, 3rem)',
+          color: isDark ? 'rgba(0, 102, 255, 0.15)' : 'rgba(0, 82, 204, 0.12)',
+          lineHeight: 1,
+          letterSpacing: '-0.04em',
+        }}>
+        {number}
+      </div>
+      <h3
+        className="font-sans font-semibold mb-3"
+        style={{
+          fontSize: '1.05rem',
+          color: 'var(--accent-cyan)',
+        }}>
+        {title}
+      </h3>
+      <p
+        className="font-light"
+        style={{
+          fontSize: '0.88rem',
+          lineHeight: 1.65,
+          color: 'var(--text-muted)',
+        }}>
+        {description}
+      </p>
     </div>
-    <h3
-      className="font-sans font-semibold mb-3"
-      style={{
-        fontSize: '1.05rem',
-        color: 'var(--accent-cyan)',
-      }}>
-      {title}
-    </h3>
-    <p
-      className="font-light"
-      style={{
-        fontSize: '0.88rem',
-        lineHeight: 1.65,
-        color: 'var(--text-muted)',
-      }}>
-      {description}
-    </p>
-  </div>
-);
+  );
+};
 
 const HowItWorks: React.FC<HowItWorksProps> = ({
   steps = [
@@ -93,19 +102,24 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
     },
   ],
 }) => {
+  const { theme } = useAppStore();
+
+  const isDark = theme === 'dark';
+
   return (
     <section
       id="how"
-      className="py-16 md:py-24 px-4 md:px-8 lg:px-12 border-t relative z-10"
+      className="py-16 md:py-24 px-4 md:px-8 lg:px-12 border-t relative z-10 transition-all duration-500"
       style={{
         borderColor: 'var(--glass-border)',
-        background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(10, 14, 39, 0.4) 50%, rgba(0, 0, 0, 0.8) 100%)',
+        background: isDark
+          ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(10, 14, 39, 0.4) 50%, rgba(0, 0, 0, 0.8) 100%)'
+          : 'linear-gradient(135deg, rgba(244, 247, 251, 0.5) 0%, rgba(240, 246, 255, 0.5) 50%, rgba(245, 247, 251, 0.5) 100%)',
       }}>
-      <div className="max-w-6xl mx-auto\">
-        {/* Header */}
-        <div className="text-center mb-12 md:mb-16 lg:mb-18 reveal\">
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-12 md:mb-16 lg:mb-18 reveal">
           <p
-            className="font-mono text-xs uppercase tracking-widest mb-4 mx-auto\"
+            className="font-mono text-xs uppercase tracking-widest mb-4 mx-auto"
             style={{
               color: 'var(--primary-blue)',
               letterSpacing: '0.18em',
@@ -125,7 +139,7 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
             confident edit in <em style={{ color: 'var(--accent-yellow)', fontStyle: 'normal' }}>minutes.</em>
           </h2>
           <p
-            className="font-light mx-auto\"
+            className="font-light mx-auto"
             style={{
               fontSize: '1rem',
               lineHeight: 1.7,
@@ -143,6 +157,7 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
               number={step.number}
               title={step.title}
               description={step.description}
+              isDark={isDark}
             />
           ))}
         </div>

@@ -2,10 +2,12 @@
 
 import React, { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAppStore } from '@/lib/store';
 import DnaSVG from './DnaSVG';
 
 const Hero: React.FC = () => {
   const router = useRouter();
+  const { theme } = useAppStore();
   const [isPrimaryPending, startPrimaryTransition] = useTransition();
   const [isGhostPending, startGhostTransition] = useTransition();
 
@@ -17,18 +19,21 @@ const Hero: React.FC = () => {
     startGhostTransition(() => router.push('/how-it-works'));
   };
 
+  const isDark = theme === 'dark';
+
   return (
     <section
       id="hero"
-      className="min-h-screen grid grid-cols-1 md:grid-cols-2 relative pt-20 overflow-hidden"
+      className="min-h-screen grid grid-cols-1 md:grid-cols-2 relative pt-20 overflow-hidden transition-all duration-500"
       style={{ paddingTop: '80px' }}>
       <div
-        className="absolute inset-0 pointer-events-none"
+        className="absolute inset-0 pointer-events-none transition-all duration-500"
         style={{
-          background: `
-            radial-gradient(ellipse 60% 60% at 20% 50%, rgba(0, 102, 255, 0.1) 0%, transparent 70%),
-            radial-gradient(ellipse 50% 70% at 80% 30%, rgba(0, 217, 255, 0.08) 0%, transparent 70%)
-          `,
+          background: isDark
+            ? `radial-gradient(ellipse 60% 60% at 20% 50%, rgba(0, 102, 255, 0.1) 0%, transparent 70%),
+               radial-gradient(ellipse 50% 70% at 80% 30%, rgba(0, 217, 255, 0.08) 0%, transparent 70%)`
+            : `radial-gradient(ellipse 60% 60% at 20% 50%, rgba(0, 82, 204, 0.08) 0%, transparent 70%),
+               radial-gradient(ellipse 50% 70% at 80% 30%, rgba(0, 153, 187, 0.06) 0%, transparent 70%)`,
         }}
       />
 
@@ -40,7 +45,7 @@ const Hero: React.FC = () => {
         className="flex flex-col justify-center px-4 md:px-6 lg:px-12 py-12 md:py-20 relative z-10"
         style={{ paddingLeft: 'clamp(1rem, 5vw, 72px)', paddingRight: 'clamp(1rem, 5vw, 24px)' }}>
         <p
-          className="font-mono text-xs uppercase tracking-widest text-blue-400 mb-7 opacity-0"
+          className="font-mono text-xs uppercase tracking-widest mb-7 opacity-0"
           style={{
             animation: 'fadeUp 0.7s 0.2s forwards',
             color: 'var(--primary-blue)',
@@ -58,9 +63,13 @@ const Hero: React.FC = () => {
             animation: 'fadeUp 0.7s 0.35s forwards',
           }}>
           Gen<br />
-          <span style={{ color:  '#22d3ee',
-                         opacity: 0.65,
-           }}>‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ Pilot</span>
+          <span
+            style={{
+              color: 'var(--accent-cyan)',
+              opacity: 0.65,
+            }}>
+            ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ Pilot
+          </span>
         </h1>
 
         <p
@@ -82,7 +91,7 @@ const Hero: React.FC = () => {
           <button
             onClick={handlePrimaryClick}
             disabled={isPrimaryPending}
-            className="btn btn-primary"
+            className="btn btn-primary transition-all duration-300"
             style={{
               padding: '14px 28px',
               fontSize: '0.75rem',
@@ -90,15 +99,21 @@ const Hero: React.FC = () => {
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               fontWeight: 600,
+              background: isDark
+                ? 'linear-gradient(135deg, #0066ff 0%, #00d9ff 100%)'
+                : 'linear-gradient(135deg, #0052cc 0%, #0099bb 100%)',
+              color: isDark ? '#000' : '#fff',
               opacity: isPrimaryPending ? 0.7 : 1,
               cursor: isPrimaryPending ? 'not-allowed' : 'pointer',
+              border: 'none',
+              borderRadius: '0.5rem',
             }}>
             {isPrimaryPending ? 'Loading...' : 'Request Early Access'}
           </button>
           <button
             onClick={handleGhostClick}
             disabled={isGhostPending}
-            className="btn btn-ghost"
+            className="btn btn-ghost transition-all duration-300"
             style={{
               padding: '14px 28px',
               fontSize: '0.75rem',
@@ -106,8 +121,12 @@ const Hero: React.FC = () => {
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               fontWeight: 600,
+              background: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 82, 204, 0.1)',
+              color: isDark ? '#fff' : '#0052cc',
+              border: isDark ? '1.5px solid rgba(255, 255, 255, 0.25)' : '1.5px solid rgba(0, 82, 204, 0.25)',
               opacity: isGhostPending ? 0.7 : 1,
               cursor: isGhostPending ? 'not-allowed' : 'pointer',
+              borderRadius: '0.5rem',
             }}>
             {isGhostPending ? 'Loading...' : 'See How It Works'}
           </button>
@@ -115,25 +134,27 @@ const Hero: React.FC = () => {
       </div>
 
       <div
-        className="hidden md:flex items-center justify-center py-12 md:py-20 relative z-10 opacity-0"
+        className="hidden md:flex items-center justify-center py-12 md:py-20 relative z-10 opacity-0 transition-all duration-500"
         style={{
           paddingRight: 'clamp(1rem, 5vw, 72px)',
           paddingLeft: 'clamp(1rem, 5vw, 24px)',
           animation: 'fadeIn 1s 0.8s forwards',
         }}>
         <div
-          className="w-full max-w-xs md:max-w-md rounded-2xl overflow-hidden"
+          className="w-full max-w-xs md:max-w-md rounded-2xl overflow-hidden transition-all duration-500"
           style={{
             background: 'var(--glass-bg)',
             border: '1.5px solid var(--glass-border)',
             backdropFilter: 'blur(30px)',
-            boxShadow: '0 8px 40px rgba(0, 102, 255, 0.2), inset 1px 1px 1px rgba(255, 255, 255, 0.1)',
+            boxShadow: isDark
+              ? '0 8px 40px rgba(0, 102, 255, 0.2), inset 1px 1px 1px rgba(255, 255, 255, 0.1)'
+              : '0 8px 40px rgba(0, 82, 204, 0.15), inset 1px 1px 1px rgba(255, 255, 255, 0.3)',
           }}>
           <div
-            className="flex items-center gap-2 p-4"
+            className="flex items-center gap-2 p-4 transition-all duration-500"
             style={{
-              background: 'rgba(0, 102, 255, 0.1)',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+              background: isDark ? 'rgba(0, 102, 255, 0.1)' : 'rgba(0, 82, 204, 0.08)',
+              borderBottom: '1px solid var(--glass-border)',
             }}>
             <div className="w-2.5 h-2.5 rounded-full" style={{ background: '#ff5f57' }} />
             <div className="w-2.5 h-2.5 rounded-full" style={{ background: 'var(--accent-yellow)' }} />

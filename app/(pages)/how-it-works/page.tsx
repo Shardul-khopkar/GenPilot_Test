@@ -1,20 +1,13 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React from 'react';
+import { useAppStore } from '@/lib/store';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
 export default function HowItWorksPage() {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
+  const { theme } = useAppStore();
+  const isDark = theme === 'dark';
 
   const steps = [
     {
@@ -46,18 +39,91 @@ export default function HowItWorksPage() {
   return (
     <>
       <Navigation />
-      <div className="relative min-h-screen bg-gradient-to-b from-black via-blue-950 to-black pt-24 pb-16 px-6">
+      <div 
+        className="relative min-h-screen pt-24 pb-16 px-6 transition-colors duration-500"
+        style={{
+          background: isDark
+            ? 'linear-gradient(to bottom, #000000, #0a0e27, #000000)'
+            : 'linear-gradient(to bottom, #f4f7fb, #e8f0ff, #f4f7fb)',
+        }}>
         <style>{`
           .wip-badge {
             font-family: 'Space Mono', monospace;
             font-size: 0.75rem;
             letter-spacing: 0.18em;
             text-transform: uppercase;
-            color: #00d9ff;
             display: inline-block;
             padding: 8px 16px;
-            background: rgba(0, 217, 255, 0.1);
-            border: 1.5px solid rgba(0, 217, 255, 0.3);
+            border-radius: 4px;
+            margin-bottom: 28px;
+            transition: all 0.5s ease;
+          }
+
+          .page-title {
+            font-family: 'Sora', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+            transition: color 0.5s ease;
+          }
+
+          .page-subtitle {
+            font-size: 1.1rem;
+            font-weight: 300;
+            line-height: 1.7;
+            margin-bottom: 48px;
+            max-width: 600px;
+            transition: color 0.5s ease;
+          }
+
+          .steps-container {
+            max-width: 900px;
+            margin: 0 auto;
+          }
+
+          .step-card {
+            margin-bottom: 32px;
+            padding: 24px;
+            border-radius: 12px;
+            backdrop-filter: blur(20px);
+            transition: all 0.5s ease;
+          }
+
+          .step-number {
+            font-family: 'Space Mono', monospace;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+            opacity: 0.7;
+            transition: all 0.5s ease;
+          }
+
+          .step-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            transition: color 0.5s ease;
+          }
+
+          .step-description {
+            font-size: 1rem;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            transition: color 0.5s ease;
+          }
+
+          .step-tag {
+            font-family: 'Space Mono', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            transition: all 0.5s ease;
+          }
             border-radius: 4px;
             margin-bottom: 28px;
           }
@@ -67,17 +133,19 @@ export default function HowItWorksPage() {
             font-weight: 700;
             line-height: 1.1;
             letter-spacing: -0.03em;
-            color: #ffffff;
             margin-bottom: 24px;
+            color: var(--text);
+            transition: color 0.5s ease;
           }
 
           .wip-subtitle {
             font-size: 1.1rem;
             font-weight: 300;
             line-height: 1.7;
-            color: #b0b8c8;
             margin-bottom: 56px;
             max-width: 700px;
+            color: var(--text-muted);
+            transition: color 0.5s ease;
           }
 
           .timeline-item {
@@ -92,29 +160,31 @@ export default function HowItWorksPage() {
             font-family: 'Space Mono', monospace;
             font-size: 2.5rem;
             font-weight: 700;
-            color: rgba(0, 102, 255, 0.2);
             line-height: 1;
+            color: var(--primary-blue);
+            opacity: 0.2;
+            transition: all 0.5s ease;
           }
 
           .timeline-content {
-            background: rgba(20, 30, 80, 0.25);
-            border: 1.5px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             padding: 32px;
             backdrop-filter: blur(20px);
-            box-shadow: 0 4px 20px rgba(0, 102, 255, 0.1);
+            transition: all 0.5s ease;
           }
 
           .timeline-content h3 {
             font-size: 1.3rem;
-            color: #ffffff;
             margin-bottom: 12px;
+            color: var(--text);
+            transition: color 0.5s ease;
           }
 
           .timeline-content p {
-            color: #b0b8c8;
             line-height: 1.6;
             margin-bottom: 16px;
+            color: var(--text-muted);
+            transition: color 0.5s ease;
           }
 
           .timeline-tag {
@@ -123,15 +193,22 @@ export default function HowItWorksPage() {
             font-size: 0.65rem;
             letter-spacing: 0.1em;
             text-transform: uppercase;
-            color: #00d9ff;
-            background: rgba(0, 217, 255, 0.1);
             padding: 4px 12px;
             border-radius: 3px;
+            transition: all 0.5s ease;
           }
         `}</style>
 
         <div className="max-w-4xl mx-auto relative z-10">
-          <div className="wip-badge">Work In Progress</div>
+          <div 
+            className="wip-badge transition-colors duration-500"
+            style={{
+              color: isDark ? '#00d9ff' : '#0099bb',
+              background: isDark ? 'rgba(0, 217, 255, 0.1)' : 'rgba(0, 153, 187, 0.08)',
+              border: isDark ? '1.5px solid rgba(0, 217, 255, 0.3)' : '1.5px solid rgba(0, 153, 187, 0.25)',
+            }}>
+            Work In Progress
+          </div>
           <h1 className="wip-title">How GenPilot Works</h1>
           <p className="wip-subtitle">Discover the AI-powered workflow that transforms genetic research from weeks to days.</p>
 
@@ -139,22 +216,52 @@ export default function HowItWorksPage() {
             {steps.map((step, index) => (
               <div key={index} className="timeline-item">
                 <div className="timeline-number">{step.number}</div>
-                <div className="timeline-content">
+                <div 
+                  className="timeline-content transition-all duration-500"
+                  style={{
+                    background: isDark ? 'rgba(20, 30, 80, 0.25)' : 'rgba(0, 82, 204, 0.06)',
+                    border: `1.5px solid ${isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 82, 204, 0.2)'}`,
+                    boxShadow: isDark ? '0 4px 20px rgba(0, 102, 255, 0.1)' : '0 4px 20px rgba(0, 82, 204, 0.05)',
+                  }}>
                   <h3>{step.title}</h3>
                   <p>{step.description}</p>
-                  <span className="timeline-tag">{step.tag}</span>
+                  <span 
+                    className="timeline-tag transition-all duration-500"
+                    style={{
+                      color: isDark ? '#00d9ff' : '#0099bb',
+                      background: isDark ? 'rgba(0, 217, 255, 0.1)' : 'rgba(0, 153, 187, 0.08)',
+                    }}>
+                    {step.tag}
+                  </span>
                 </div>
               </div>
             ))}
           </div>
 
           <div className="flex gap-4 justify-start flex-wrap mt-14">
-            <Link href="/" className="px-6 py-3 bg-transparent border-2 border-cyan-400 text-cyan-400 font-mono text-xs tracking-widest uppercase hover:bg-cyan-400 hover:bg-opacity-5 transition-all rounded">
+            <a 
+              href="/" 
+              className="px-6 py-3 font-mono text-xs tracking-widest uppercase transition-all rounded duration-500"
+              style={{
+                color: isDark ? '#00d9ff' : '#0099bb',
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                borderColor: isDark ? '#00d9ff' : '#0099bb',
+                backgroundColor: isDark ? 'rgba(0, 217, 255, 0.05)' : 'rgba(0, 153, 187, 0.05)',
+              }}>
               Back to Home
-            </Link>
-            <Link href="/request-access" className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-black font-mono text-xs tracking-widest uppercase rounded hover:shadow-lg hover:shadow-cyan-500/50 transition-all">
+            </a>
+            <a 
+              href="/request-access" 
+              className="px-6 py-3 font-mono text-xs tracking-widest uppercase rounded transition-all duration-500"
+              style={{
+                background: isDark
+                  ? 'linear-gradient(to right, #0066ff, #00d9ff)'
+                  : 'linear-gradient(to right, #0052cc, #0099bb)',
+                color: '#ffffff',
+              }}>
               Request Early Access
-            </Link>
+            </a>
           </div>
         </div>
       </div>

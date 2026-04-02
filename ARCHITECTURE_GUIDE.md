@@ -29,6 +29,10 @@ GenPilot provides an IDE-like interface for genetic engineers to analyze CRISPR 
 - Redis for caching and async job queues
 - Python for bioinformatics processing
 
+**State Management:**
+- Zustand 4.4.0 for application state
+- localStorage persistence for theme preferences
+
 ## Part 2: Frontend Architecture
 
 ### Project Structure
@@ -45,6 +49,7 @@ genpilot-next/
 │       └── docs/                 # Technical documentation
 ├── components/                   # Reusable React components
 │   ├── Navigation.tsx            # Fixed top nav with mobile menu
+│   ├── FloatingThemeToggle.tsx   # Persistent floating theme toggle (NEW)
 │   ├── Hero.tsx                  # Landing section with editor mockup
 │   ├── StatsStrip.tsx            # Three key metrics
 │   ├── Problem.tsx               # Problem statement section
@@ -60,7 +65,7 @@ genpilot-next/
 │   ├── api.ts                    # Future API client setup
 │   ├── constants.ts              # Colors, text, configuration
 │   ├── hooks.ts                  # React hooks (scroll, resize, etc)
-│   └── store.ts                  # Zustand state management
+│   └── store.ts                  # Zustand theme state with persistence
 ├── styles/                       # Global CSS
 │   └── globals.css               # Animation keyframes, variables
 └── tsconfig.json                 # TypeScript configuration
@@ -68,14 +73,28 @@ genpilot-next/
 
 ### Design System
 
-**Color Palette:**
-- Primary Blue: #0066ff (main action color)
-- Primary Blue Dark: #004db3 (hover states)
-- Accent Cyan: #00d9ff (highlights, secondary actions)
-- Accent Green: #00ff8c (success, loader animation)
-- Accent Yellow: #ffd700 (tertiary actions, tags)
-- Background: #000000 to #0a0e27 (gradient)
+**Theme System:**
+GenPilot implements a complete light/dark theme system using:
+- **State Management**: Zustand store (`lib/store.ts`) persists theme preference to localStorage
+- **CSS Variables**: `:root` (light) and `html.dark` (dark) selectors with smooth 0.5s transitions
+- **Hydration Prevention**: Inline script in layout detects localStorage theme before React renders to prevent flash
+- **Global Class**: `html.dark` class applied by useEffect after hydration
+
+**Light Theme Color Palette:**
+- Text: #0d1117 (black), #1a1a1a (muted for visibility)
+- Background: #f4f7fb with light blue gradient
+- Primary Blue: #0052cc (action color)
+- Accent Cyan: #0099bb (highlights)
+- Glass BG: rgba(255, 255, 255, 0.75) with white borders
+
+**Dark Theme Color Palette:**
 - Text: #ffffff (primary), #b0b8c8 (secondary/muted)
+- Background: #000000 with dark blue gradient
+- Primary Blue: #0066ff (main action color)
+- Accent Cyan: #00d9ff (highlights, secondary actions)
+- Accent Green: #00ff8c (loader animation)
+- Accent Yellow: #ffd700 (tertiary actions, tags)
+- Glass BG: rgba(20, 30, 80, 0.25) with blue borders
 
 **Typography:**
 - Display: Sora (sans-serif) 300-700 weights - headlines and content
@@ -99,6 +118,16 @@ genpilot-next/
 - `isOpen`: boolean state for mobile menu toggle
 - Uses `useState` for menu state management
 
+#### FloatingThemeToggle Component (components/FloatingThemeToggle.tsx) - NEW
+- Fixed-position floating button for persistent theme switching
+- **Display**: Emoji-only (🌙 for dark mode, ☀️ for light mode)
+- **Position Options**: bottom-right (default), bottom-left, top-right, top-left, right-center
+- **Styling**: 56px circle with backdrop filter blur, smooth transitions
+- **Interactions**: Hover scale 110%, active scale 95%, smooth 0.3s transitions
+- **Z-index**: 50 (above most content, below modals)
+- **State**: Uses `useAppStore()` to read/toggle theme
+- **Visibility**: Always visible on all pages after hydration
+
 #### Loader Component (components/Loader.tsx)
 - Full-page overlay that shows during initial load
 - Exact CSS animation reproduction from HTML version
@@ -107,17 +136,15 @@ genpilot-next/
 - Text pulse animation with "INITIALIZING GenPilot"
 - Automatically hides after 2.5 seconds
 
-**Hydration Fix (v2.0):**
-- Uses `isMounted` state to prevent server-rendering
-- Component returns `null` on server, only renders on client after hydration
-- Eliminates React hydration mismatch errors with inline styles
-- Pattern: `useEffect` sets `isMounted=true`, wraps component JSX in `if (!isMounted) return null`
+**Hydration & Theme:**
+- Component respects theme from localStorage (set before render to prevent flash)
+- Color animation uses theme-aware gradients
+- Z-index: 9999 ensures overlay stays on top
 
 **Animation Details:**
 - `move-dna` keyframe: 2-second animation with scale/opacity changes
 - `pulse-text` keyframe: 1.5-second opacity pulse
 - 8 base pairs total with staggered animation delays
-- Z-index: 9999 ensures overlay stays on top
 
 #### Hero Section (components/Hero.tsx)
 - Split layout: text on left, mockup on right
@@ -126,12 +153,14 @@ genpilot-next/
 - Left side: typography and call-to-action buttons
 - Right side: editor card showing sequence input mockup
 - Responsive: stacks vertically on mobile
+- **Theme Support**: All text and gradients adapt to light/dark theme with smooth transitions
 
 #### StatsStrip Component (components/StatsStrip.tsx)
 - Three key metrics in a grid
 - Responsive: 1 column mobile, 3 columns on md
 - Content: genome coverage, processing speed, confidence accuracy
-- Uses glass morphism styling
+- Uses glass morphism styling with theme-aware colors
+- Animation: Fade-in on mount with staggered card delays
 
 #### Problem Section (components/Problem.tsx)
 - Headline: "Why Genetic Engineering Takes Weeks"
@@ -165,6 +194,7 @@ genpilot-next/
 - Central call-to-action with gradient background
 - Headline and subheading
 - Buttons routing to /request-access and /contact
+- **Theme Support**: Gradient and button colors adapt to current theme
 
 #### Footer Component (components/Footer.tsx)
 - Logo, navigation links, copyright

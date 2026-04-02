@@ -37,6 +37,14 @@ const Loader: React.FC = () => {
           visibility: visible;
         }
 
+        html.dark #loader {
+          background: radial-gradient(ellipse at 20% 50%, rgba(0,40,80,0.9) 0%, rgba(5,10,20,0.95) 40%, #000000 100%);
+        }
+
+        html:not(.dark) #loader {
+          background: radial-gradient(ellipse at 20% 50%, rgba(244,247,251,0.95) 0%, rgba(240,246,255,0.9) 40%, #f4f7fb 100%);
+        }
+
         #loader.loaded {
           opacity: 0;
           visibility: hidden;
@@ -68,14 +76,43 @@ const Loader: React.FC = () => {
         }
 
         .loader-dot.dot--1 { 
-          background-color: #00ff8c; 
-          color: #00ff8c; 
+          background-color: #00ff8c;
+          color: #00ff8c;
           animation-delay: calc(var(--i) * -0.15s); 
         }
+
+        html.dark .loader-dot.dot--1 {
+          background-color: #00ff8c;
+          color: #00ff8c;
+        }
+
+        html:not(.dark) .loader-dot.dot--1 {
+          background-color: #00a86b;
+          color: #00a86b;
+        }
+
         .loader-dot.dot--2 { 
-          background-color: #00d9ff; 
-          color: #00d9ff; 
+          background-color: #00d9ff;
+          color: #00d9ff;
           animation-delay: calc(var(--i) * -0.15s - 1s); 
+        }
+
+        html.dark .loader-dot.dot--2 {
+          background-color: #00d9ff;
+          color: #00d9ff;
+        }
+
+
+        html.dark .loader-text {
+          color: #00ff8c;
+        }
+
+        html:not(.dark) .loader-text {
+          color: #00a86b;
+        }
+        html:not(.dark) .loader-dot.dot--2 {
+          background-color: #0099bb;
+          color: #0099bb;
         }
 
         @keyframes move-dna {

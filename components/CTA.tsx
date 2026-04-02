@@ -1,11 +1,22 @@
 'use client';
 
-import React, { useTransition } from 'react';
+import React, { useTransition, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAppStore } from '@/lib/store';
 
 const CTA: React.FC = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const { theme } = useAppStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const isDark = theme === 'dark';
 
   const handleRequestAccess = () => {
     startTransition(() => router.push('/request-access'));
@@ -17,14 +28,16 @@ const CTA: React.FC = () => {
 
   return (
     <section
-      className="py-16 md:py-24 lg:py-30 px-4 md:px-8 lg:px-12 border-t text-center relative overflow-hidden"
+      className="py-16 md:py-24 lg:py-30 px-4 md:px-8 lg:px-12 border-t text-center relative overflow-hidden transition-colors duration-500"
       style={{
-        borderColor: '1.5px solid var(--glass-border)',
+        borderColor: 'var(--glass-border)',
       }}>
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: 'radial-gradient(ellipse 70% 80% at 50% 50%, rgba(0, 102, 255, 0.05) 0%, transparent 70%)',
+          background: isDark 
+            ? 'radial-gradient(ellipse 70% 80% at 50% 50%, rgba(0, 102, 255, 0.08) 0%, transparent 70%)'
+            : 'radial-gradient(ellipse 70% 80% at 50% 50%, rgba(0, 82, 204, 0.06) 0%, transparent 70%)',
         }}
       />
 
@@ -69,9 +82,9 @@ const CTA: React.FC = () => {
           <button
             onClick={handleRequestAccess}
             disabled={isPending}
-            className="btn btn-primary w-full md:w-auto"
+            className="btn btn-primary w-full md:w-auto transition-all duration-500"
             style={{
-              padding: '14px 24px md:padding-28',
+              padding: '14px 24px',
               fontSize: '0.75rem',
               fontFamily: "'Space Mono', monospace",
               letterSpacing: '0.12em',
@@ -79,13 +92,18 @@ const CTA: React.FC = () => {
               fontWeight: 600,
               opacity: isPending ? 0.7 : 1,
               cursor: isPending ? 'not-allowed' : 'pointer',
+              background: isDark
+                ? 'linear-gradient(135deg, #0066ff 0%, #00d9ff 100%)'
+                : 'linear-gradient(135deg, #0052cc 0%, #0099bb 100%)',
+              color: '#ffffff',
+              border: 'none',
             }}>
             {isPending ? 'Loading...' : 'Request Early Access'}
           </button>
           <button
             onClick={handleContact}
             disabled={isPending}
-            className="btn btn-ghost"
+            className="btn btn-ghost transition-all duration-500"
             style={{
               padding: '14px 28px',
               fontSize: '0.75rem',
@@ -95,6 +113,9 @@ const CTA: React.FC = () => {
               fontWeight: 600,
               opacity: isPending ? 0.7 : 1,
               cursor: isPending ? 'not-allowed' : 'pointer',
+              color: 'var(--text)',
+              border: `1.5px solid ${isDark ? 'rgba(0, 217, 255, 0.3)' : 'rgba(0, 82, 204, 0.3)'}`,
+              backgroundColor: isDark ? 'rgba(0, 102, 255, 0.08)' : 'rgba(0, 82, 204, 0.06)',
             }}>
             {isPending ? 'Loading...' : 'Contact the Team'}
           </button>

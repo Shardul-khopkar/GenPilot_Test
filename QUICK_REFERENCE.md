@@ -24,13 +24,34 @@ tsc --noEmit           # Check for TypeScript errors
 
 ### Components
 - `components/Navigation.tsx` - Top navbar on all pages
+- `components/FloatingThemeToggle.tsx` - Persistent floating theme toggle (NEW)
 - `components/Footer.tsx` - Footer content
+- `components/Hero.tsx` - Landing section
+- `components/StatsStrip.tsx` - Key metrics display
+- `components/Problem.tsx` - Problem statement section
+- `components/HowItWorks.tsx` - 4-step process workflow
+- `components/Features.tsx` - Features grid (6 items)
+- `components/Proteins.tsx` - About section
+- `components/Updates.tsx` - Changelog
 
 ### Libraries & Utilities
 - `lib/api.ts` - Axios client + API types (AnalyzeRequest, AnalyzeResponse)
-- `lib/store.ts` - Zustand store (useAppStore)
+- `lib/store.ts` - Zustand store with theme state + localStorage persistence
 - `lib/hooks.ts` - React Query hooks (useAnalyzeSequence)
 - `lib/constants.ts` - Shared constants and enums
+
+### Theme System
+- **Store (lib/store.ts)**: `useAppStore()` hook with `theme` state and `toggleTheme()` action
+- **CSS Variables**: `:root` (light) and `html.dark` (dark) in `styles/globals.css`
+- **Component Usage**:
+  ```typescript
+  import { useAppStore } from '@/lib/store';
+  
+  export default function Component() {
+    const { theme, toggleTheme } = useAppStore();
+    return <button onClick={toggleTheme}>{theme}</button>;
+  }
+  ```
 
 ### Styling
 - `styles/globals.css` - All global styles, animations, glass morphism
@@ -96,9 +117,14 @@ export default function MyComponent() {
 <button className="btn btn-ghost">Secondary CTA</button>
 
 // Animations
-<div className="reveal">Fades in on mount</div>
+<div className="reveal">Fades in on mount with scroll reveal</div>
 <div className="float">Floats up and down</div>
 <div className="pulse">Pulses opacity</div>
+
+// Theme Toggle (FloatingThemeToggle already in layout)
+// For manual toggle:
+const { theme, toggleTheme } = useAppStore();
+<button onClick={toggleTheme}>{theme === 'light' ? '🌙' : '☀️'}</button>
 ```
 
 ### Add an Environment Variable
@@ -115,11 +141,19 @@ const value = process.env.NEXT_PUBLIC_VARIABLE_NAME;
 
 ## Color Reference
 
-- **Primary Blue**: `text-primary-blue` or `#0066ff`
-- **Accent Cyan**: `text-accent-cyan` or `#00d9ff`
-- **Accent Yellow**: `text-accent-yellow` or `#ffd700`
-- **Dark BG**: `bg-black` or `#000000`
-- **Muted Text**: `text-text-muted` or `#b0b8c8`
+### Light Theme
+- **Text**: `#0d1117` (black) or `#1a1a1a` (muted)
+- **Background**: `#f4f7fb` with light blue gradient
+- **Primary Blue**: `#0052cc`
+- **Accent Cyan**: `#0099bb`
+- **Yellow**: `#ffd700`
+
+### Dark Theme (Default)
+- **Primary Blue**: `#0066ff` or use `text-primary-blue`
+- **Accent Cyan**: `#00d9ff` or use `text-accent-cyan`
+- **Accent Yellow**: `#ffd700` or use `text-accent-yellow`
+- **Dark BG**: `#000000` or use `bg-black`
+- **Muted Text**: `#b0b8c8` or use `text-text-muted`
 
 ## Typography
 

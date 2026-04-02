@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { useAppStore } from '@/lib/store';
 
 interface ProteinTag {
   name: string;
@@ -33,13 +34,19 @@ const Proteins: React.FC<ProteinsProps> = ({
     { number: '97%', label: 'Prediction accuracy benchmark' },
   ],
 }) => {
+  const { theme } = useAppStore();
+
+  const isDark = theme === 'dark';
+
   return (
     <section
       id="proteins"
-      className="py-16 md:py-20 px-4 md:px-8 lg:px-12 border-t relative z-10"
+      className="py-16 md:py-20 px-4 md:px-8 lg:px-12 border-t relative z-10 transition-all duration-500"
       style={{
         borderColor: 'var(--glass-border)',
-        background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(10, 14, 39, 0.4) 50%, rgba(0, 0, 0, 0.8) 100%)',
+        background: isDark
+          ? 'linear-gradient(135deg, rgba(0, 0, 0, 0.8) 0%, rgba(10, 14, 39, 0.4) 50%, rgba(0, 0, 0, 0.8) 100%)'
+          : 'linear-gradient(135deg, rgba(244, 247, 251, 0.5) 0%, rgba(240, 246, 255, 0.5) 50%, rgba(245, 247, 251, 0.5) 100%)',
       }}>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 lg:gap-20 max-w-6xl mx-auto items-center">
         <div className="reveal">
@@ -78,11 +85,11 @@ const Proteins: React.FC<ProteinsProps> = ({
             {tags.map((tag, index) => (
               <span
                 key={index}
-                className="font-mono text-xs uppercase tracking-widest px-3 md:px-4 py-2 rounded\"
+                className="font-mono text-xs uppercase tracking-widest px-3 md:px-4 py-2 rounded transition-all duration-300"
                 style={{
                   color: 'var(--accent-cyan)',
-                  background: 'rgba(0, 217, 255, 0.1)',
-                  border: '1.5px solid rgba(0, 217, 255, 0.3)',
+                  background: isDark ? 'rgba(0, 217, 255, 0.1)' : 'rgba(0, 153, 187, 0.08)',
+                  border: isDark ? '1.5px solid rgba(0, 217, 255, 0.3)' : '1.5px solid rgba(0, 153, 187, 0.25)',
                   letterSpacing: '0.1em',
                 }}>
                 {tag.name}
@@ -91,12 +98,11 @@ const Proteins: React.FC<ProteinsProps> = ({
           </div>
         </div>
 
-        {/* Right Column - Stats Grid */}
         <div className="grid grid-cols-2 gap-3 md:gap-4 reveal">
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="p-4 md:p-6 rounded-xl text-center"
+              className="p-4 md:p-6 rounded-xl text-center transition-all duration-300"
               style={{
                 background: 'var(--glass-bg)',
                 border: '1.5px solid var(--glass-border)',

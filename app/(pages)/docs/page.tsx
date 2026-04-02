@@ -1,25 +1,24 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
+import React from 'react';
+import { useAppStore } from '@/lib/store';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 
 export default function DocsPage() {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    return null;
-  }
+  const { theme } = useAppStore();
+  const isDark = theme === 'dark';
 
   return (
     <>
       <Navigation />
-      <div className="relative min-h-full bg-gradient-to-b from-black via-blue-950 to-black pt-24 pb-16 px-6">
+      <div 
+        className="relative min-h-full pt-24 pb-16 px-6 transition-colors duration-500"
+        style={{
+          background: isDark
+            ? 'linear-gradient(to bottom, #000000, #0a0e27, #000000)'
+            : 'linear-gradient(to bottom, #f4f7fb, #e8f0ff, #f4f7fb)',
+        }}>
         <style>{`
           .docs-container {
             position: relative;
@@ -38,51 +37,51 @@ export default function DocsPage() {
             font-weight: 700;
             line-height: 1.2;
             letter-spacing: -0.03em;
-            color: #ffffff;
+            color: var(--text);
             margin-bottom: 16px;
+            transition: color 0.5s ease;
           }
 
           .docs-header p {
             font-size: 1.1rem;
-            color: #b0b8c8;
+            color: var(--text-muted);
             line-height: 1.6;
+            transition: color 0.5s ease;
           }
 
           .tech-section {
             margin-bottom: 56px;
             padding: 32px;
-            background: rgba(20, 30, 80, 0.25);
-            border: 1.5px solid rgba(255, 255, 255, 0.15);
             border-radius: 12px;
             backdrop-filter: blur(20px);
-            box-shadow: 0 4px 20px rgba(0, 102, 255, 0.1);
+            transition: all 0.5s ease;
           }
 
           .tech-section h2 {
             font-size: 1.5rem;
-            color: #00d9ff;
             margin-bottom: 16px;
             font-weight: 600;
             display: flex;
             align-items: center;
             gap: 12px;
+            color: var(--accent-cyan);
+            transition: color 0.5s ease;
           }
 
           .tech-section p {
-            color: #b0b8c8;
+            color: var(--text-muted);
             line-height: 1.7;
             margin-bottom: 16px;
+            transition: color 0.5s ease;
           }
 
           .code-block {
-            background: rgba(0, 0, 0, 0.5);
-            border-left: 3px solid #0066ff;
+            border-left: 3px solid var(--primary-blue);
             padding: 16px;
             border-radius: 4px;
             margin: 16px 0;
             font-family: 'Space Mono', monospace;
             font-size: 0.85rem;
-            color: #00d9ff;
             overflow-x: auto;
             line-height: 1.5;
           }
@@ -95,17 +94,16 @@ export default function DocsPage() {
           }
 
           .stack-item {
-            background: rgba(0, 102, 255, 0.05);
-            border: 1px solid rgba(0, 102, 255, 0.2);
             padding: 12px 16px;
             border-radius: 6px;
             font-family: 'Space Mono', monospace;
             font-size: 0.9rem;
-            color: #ffffff;
+            transition: all 0.5s ease;
           }
 
           .stack-item strong {
-            color: #ffd700;
+            color: var(--accent-yellow);
+            transition: color 0.5s ease;
           }
 
           .feature-list {
@@ -117,30 +115,32 @@ export default function DocsPage() {
             padding: 8px 0;
             padding-left: 28px;
             position: relative;
-            color: #b0b8c8;
+            color: var(--text-muted);
             line-height: 1.6;
+            transition: color 0.5s ease;
           }
 
           .feature-list li:before {
             content: '';
             position: absolute;
             left: 0;
-            color: #00d9ff;
+            color: var(--accent-cyan);
             font-weight: bold;
+            transition: color 0.5s ease;
           }
 
           .data-flow {
             margin: 24px 0;
             padding: 16px;
-            background: rgba(0, 217, 255, 0.05);
-            border: 1px dashed rgba(0, 217, 255, 0.3);
+            border: 1px dashed var(--glass-border);
             border-radius: 6px;
             font-family: 'Space Mono', monospace;
             font-size: 0.85rem;
-            color: #00d9ff;
             line-height: 1.8;
             white-space: pre-wrap;
             overflow-x: auto;
+            color: var(--accent-cyan);
+            transition: all 0.5s ease;
           }
 
           @media (max-width: 768px) {
@@ -359,12 +359,12 @@ coordinates + PAM + off-targets + confidence`}</div>
 
             <div style={{marginTop: '56px', paddingTop: '48px', borderTop: '1.5px solid rgba(255, 255, 255, 0.15)'}}>
               <div className="flex gap-4 justify-center flex-wrap">
-                <Link href="/" className="px-6 py-3 bg-transparent border-2 border-cyan-400 text-cyan-400 font-mono text-xs tracking-widest uppercase hover:bg-cyan-400 hover:bg-opacity-5 transition-all rounded">
+                <a href="/" className="px-6 py-3 bg-transparent border-2 border-cyan-400 text-cyan-400 font-mono text-xs tracking-widest uppercase hover:bg-cyan-400 hover:bg-opacity-5 transition-all rounded">
                   Back to Home
-                </Link>
-                <Link href="/contact" className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-black font-mono text-xs tracking-widest uppercase rounded hover:shadow-lg hover:shadow-cyan-500/50 transition-all">
+                </a>
+                <a href="/contact" className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-500 text-black font-mono text-xs tracking-widest uppercase rounded hover:shadow-lg hover:shadow-cyan-500/50 transition-all">
                   Get in Touch
-                </Link>
+                </a>
               </div>
             </div>
           </div>
