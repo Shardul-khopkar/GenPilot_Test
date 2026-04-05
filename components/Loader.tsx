@@ -32,7 +32,7 @@ const Loader: React.FC = () => {
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          transition: opacity 0.6s ease-out, visibility 0.6s ease-out;
+          transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), visibility 0.8s ease-out;
           opacity: 1;
           visibility: visible;
         }
@@ -55,13 +55,15 @@ const Loader: React.FC = () => {
           display: flex;
           flex-direction: column;
           gap: 14px;
-          animation: fadeIn 0.5s ease-out;
+          animation: fadeIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .base-pair {
           position: relative;
           width: 80px;
           height: 2px;
+          border-radius: 2px;
+          background: linear-gradient(90deg, transparent, rgba(0, 217, 255, 0.3), transparent);
         }
 
         .loader-dot {
@@ -71,8 +73,9 @@ const Loader: React.FC = () => {
           border-radius: 50%;
           top: 50%;
           transform: translate(-50%, -50%);
-          animation: move-dna 2s ease-in-out infinite;
-          box-shadow: 0 0 12px currentColor;
+          animation: move-dna 2s cubic-bezier(0.42, 0, 0.58, 1) infinite;
+          box-shadow: 0 0 12px currentColor, 0 0 24px currentColor;
+          filter: drop-shadow(0 0 8px currentColor);
         }
 
         .loader-dot.dot--1 { 
@@ -102,6 +105,10 @@ const Loader: React.FC = () => {
           color: #00d9ff;
         }
 
+        html:not(.dark) .loader-dot.dot--2 {
+          background-color: #0099bb;
+          color: #0099bb;
+        }
 
         html.dark .loader-text {
           color: #00ff8c;
@@ -109,10 +116,6 @@ const Loader: React.FC = () => {
 
         html:not(.dark) .loader-text {
           color: #00a86b;
-        }
-        html:not(.dark) .loader-dot.dot--2 {
-          background-color: #0099bb;
-          color: #0099bb;
         }
 
         @keyframes move-dna {
@@ -129,17 +132,27 @@ const Loader: React.FC = () => {
           font-size: 12px;
           letter-spacing: 0.3em;
           margin-top: 30px;
-          animation: pulse-text 1.5s ease-in-out infinite;
+          animation: pulse-text-smooth 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
-        @keyframes pulse-text {
+        @keyframes pulse-text-smooth {
           0%, 100% { opacity: 0.5; }
           50% { opacity: 1; }
         }
 
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from { opacity: 0; transform: scale(0.95); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Smooth page transition out */
+        #loader.loaded .loader-text {
+          animation: fadeOut 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
         }
       `}</style>
 

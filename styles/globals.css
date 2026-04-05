@@ -10,14 +10,25 @@
 
 :root {
   --primary-blue: #0052cc;
-  --primary-blue-hover: #003d99;
-  --accent-cyan: #0099bb;
-  --accent-cyan-hover: #007399;
-  --accent-yellow: #b8860b;
-  --accent-yellow-hover: #9a6d09;
+  --primary-blue-hover: #cc38e8;
+  --accent-cyan: #4db4d2;
+  --primary-db: #033176;
+  --accent-cyan-hover: #2a8fb5;
+  --accent-yellow: #c49600;
+  --accent-yellow-hover: #a67600;
+  --accent-purple: #c44ce6;
+  --accent-light-blue: #e4effd;
+  --accent-light-purple: #e8d5f2;
+  --accent-light-pink: #f5d5e8;
+  --accent-mint: #d5f0e8;
+  --accent-light-coral: #f5ddd5;
+  --accent-light-rose: #f2e0d5;
   --bg: #f4f7fb;
-  --bg-secondary: #f9fbff;
-  --bg-gradient: linear-gradient(135deg, #e8f0ff 0%, #f0f8ff 50%, #e8f0ff 100%);
+  --bg-secondary: #e4effd;
+  --bg-gradient: linear-gradient(135deg, #e4effd 0%, #e8d5f2 50%, #f5d5e8 100%);
+  --gradient-biomedical-1: linear-gradient(135deg, #c44ce6 0%, #6b5bfa 50%, #4db4d2 100%);
+  --gradient-biomedical-2: linear-gradient(135deg, #e8d5f2 0%, #d5f0e8 50%, #e4effd 100%);
+  --gradient-biomedical-3: linear-gradient(135deg, #f0caf5 0%, #d5f0e8 50%, #f5ddd5 100%);
   --glass-bg: rgba(255, 255, 255, 0.75);
   --glass-border: rgba(0, 82, 204, 0.18);
   --text: #0d1117;
@@ -118,29 +129,29 @@ body::before {
   0% {
     left: 0%;
     transform: translate(-50%, -50%) scale(0.6);
-    opacity: 0.4;
+    opacity: 0.15;
     z-index: 0;
   }
   25% {
     transform: translate(-50%, -50%) scale(1.2);
-    opacity: 1;
+    opacity: 0.35;
     z-index: 10;
   }
   50% {
     left: 100%;
     transform: translate(-50%, -50%) scale(0.6);
-    opacity: 0.4;
+    opacity: 0.15;
     z-index: 0;
   }
   75% {
     transform: translate(-50%, -50%) scale(0.4);
-    opacity: 0.2;
+    opacity: 0.08;
     z-index: -10;
   }
   100% {
     left: 0%;
     transform: translate(-50%, -50%) scale(0.6);
-    opacity: 0.4;
+    opacity: 0.15;
     z-index: 0;
   }
 }
@@ -158,7 +169,7 @@ body::before {
 .reveal {
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transition: opacity 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .reveal.visible {
@@ -189,11 +200,32 @@ body::before {
   padding: 14px 28px;
   border: none;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   text-decoration: none;
   display: inline-block;
   border-radius: 8px;
   font-weight: 600;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  pointer-events: none;
+}
+
+.btn:active::before {
+  width: 300px;
+  height: 300px;
 }
 
 .btn-primary {
@@ -204,19 +236,32 @@ body::before {
 
 .btn-primary:hover {
   background: linear-gradient(135deg, var(--accent-yellow) 0%, var(--primary-blue) 100%);
-  box-shadow: 0 0 40px rgba(255, 215, 0, 0.4);
-  transform: translateY(-2px);
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+  transform: translateY(-3px) scale(1.05);
+}
+
+.btn-primary:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 0 24px rgba(255, 215, 0, 0.3);
 }
 
 .btn-ghost {
   color: var(--accent-cyan);
   background: transparent;
   border: 1.5px solid rgba(0, 217, 255, 0.3);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .btn-ghost:hover {
   border-color: var(--accent-cyan);
-  background: rgba(0, 217, 255, 0.05);
+  background: rgba(0, 217, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 217, 255, 0.2);
+}
+
+.btn-ghost:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0, 217, 255, 0.15);
 }
 
 .dna-strand {
@@ -262,6 +307,27 @@ body::before {
     transform: scaleY(1.3);
     filter: brightness(1.2);
   }
+  animation: dna-wave 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) infinite;
 }
 
+/* ── ACCESSIBILITY: REDUCE MOTION ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 
+  html {
+    scroll-behavior: auto;
+  }
+
+  /* Allow theme transitions even with reduced motion */
+  html.dark,
+  :root {
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+}

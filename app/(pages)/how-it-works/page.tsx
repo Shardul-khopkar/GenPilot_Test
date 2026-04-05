@@ -42,9 +42,7 @@ export default function HowItWorksPage() {
       <div 
         className="relative min-h-screen pt-24 pb-16 px-6 transition-colors duration-500"
         style={{
-          background: isDark
-            ? 'linear-gradient(to bottom, #000000, #0a0e27, #000000)'
-            : 'linear-gradient(to bottom, #f4f7fb, #e8f0ff, #f4f7fb)',
+          background: 'var(--bg-gradient)',
         }}>
         <style>{`
           .wip-badge {

@@ -15,9 +15,7 @@ export default function RequestAccessPage() {
       <div 
         className="relative min-h-screen pt-24 pb-16 px-6 transition-colors duration-500"
         style={{
-          background: isDark
-            ? 'linear-gradient(to bottom, #000000, #0a0e27, #000000)'
-            : 'linear-gradient(to bottom, #f4f7fb, #e8f0ff, #f4f7fb)',
+          background: 'var(--bg-gradient)',
         }}>
         <style dangerouslySetInnerHTML={{ __html: `
           .wip-badge {
@@ -98,6 +96,29 @@ export default function RequestAccessPage() {
             font-weight: bold;
             font-size: 1.2rem;
             flex-shrink: 0;
+            color: inherit;
+          }
+
+          .btn-access {
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-family: "Space Mono", monospace;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+          }
+
+          .btn-access:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 217, 255, 0.2);
+          }
+
+          .btn-access:active {
+            transform: translateY(0);
           }
         ` }} />
 
@@ -177,7 +198,7 @@ export default function RequestAccessPage() {
             <div className="flex gap-4 justify-center flex-wrap">
               <a 
                 href="/" 
-                className="px-6 py-3 font-mono text-xs tracking-widest uppercase transition-all rounded duration-500"
+                className="btn-access transition-all duration-300"
                 style={{
                   color: isDark ? '#00d9ff' : '#0099bb',
                   borderWidth: '2px',

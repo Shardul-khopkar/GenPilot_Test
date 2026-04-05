@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import Navigation from '@/components/Navigation';
 import Loader from '@/components/Loader';
-import FloatingThemeToggle from '@/components/FloatingThemeToggle';
 import { useAppStore } from '@/lib/store';
 import '../styles/globals.css';
 
@@ -28,7 +27,7 @@ export default function RootLayout({
 
   // While not hydrated, render without dark class to prevent flickering
   return (
-    <html lang="en" className={theme === 'dark' ? 'dark' : ''}>
+    <html lang="en" className={hydrated ? (theme === 'dark' ? 'dark' : '') : ''}>
       <head>
         <meta charSet="utf-8" />
         <title>GenPilot — AI-Powered CRISPR Engineering IDE</title>
@@ -40,9 +39,11 @@ export default function RootLayout({
               try {
                 const stored = localStorage.getItem('app-store');
                 if (stored) {
-                  const state = JSON.parse(stored);
-                  if (state.state?.theme === 'dark') {
+                  const parsed = JSON.parse(stored);
+                  if (parsed.state?.theme === 'dark') {
                     document.documentElement.classList.add('dark');
+                  } else {
+                    document.documentElement.classList.remove('dark');
                   }
                 }
               } catch (e) {}
@@ -52,7 +53,6 @@ export default function RootLayout({
       </head>
       <body className="bg-white dark:bg-black transition-colors duration-500">
         <Loader />
-        <FloatingThemeToggle position="bottom-right" />
         <Navigation />
         {children}
       </body>

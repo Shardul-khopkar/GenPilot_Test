@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
+import { animationVariants, viewportConfig } from '@/lib/animations';
 
 interface ProblemCardData {
   title: string;
@@ -12,14 +14,23 @@ interface ProblemProps {
   cards?: ProblemCardData[];
 }
 
-const ProblemCard: React.FC<{ title: string; description: string; isDark: boolean }> = ({ title, description, isDark }) => {
+const ProblemCard: React.FC<{ title: string; description: string; isDark: boolean; index: number }> = ({ 
+  title, 
+  description, 
+  isDark,
+  index 
+}) => {
   const hoverBg = isDark ? 'rgba(20, 30, 80, 0.4)' : 'rgba(255, 255, 255, 0.75)';
   const hoverBorder = isDark ? 'rgba(0, 102, 255, 0.5)' : 'rgba(0, 82, 204, 0.35)';
   const hoverShadow = isDark ? '0 8px 30px rgba(0, 102, 255, 0.2)' : '0 8px 30px rgba(0, 82, 204, 0.15)';
   const normalShadow = isDark ? '0 4px 20px rgba(0, 102, 255, 0.1)' : '0 4px 20px rgba(0, 82, 204, 0.08)';
-  
+
   return (
-    <div
+    <motion.div
+      variants={animationVariants.slideInLeft}
+      initial="hidden"
+      whileInView="visible"
+      viewport={viewportConfig}
       className="px-5 md:px-7 py-4 md:py-6 rounded-xl transition-all duration-300 hover:translate-x-1 reveal"
       style={{
         background: 'var(--glass-bg)',
@@ -53,7 +64,7 @@ const ProblemCard: React.FC<{ title: string; description: string; isDark: boolea
         }}>
         {description}
       </p>
-    </div>
+    </motion.div>
   );
 };
 
@@ -122,7 +133,13 @@ const Problem: React.FC<ProblemProps> = ({
 
         <div className="flex flex-col gap-3 md:gap-4">
           {cards.map((card, index) => (
-            <ProblemCard key={index} title={card.title} description={card.description} isDark={isDark} />
+            <ProblemCard 
+              key={index} 
+              title={card.title} 
+              description={card.description} 
+              isDark={isDark}
+              index={index}
+            />
           ))}
         </div>
       </div>

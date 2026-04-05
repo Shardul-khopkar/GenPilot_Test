@@ -3,9 +3,11 @@
 import Link from 'next/link';
 import { useAppStore } from '@/lib/store';
 import { useEffect, useState } from 'react';
+import { useDelayedAction } from '@/lib/useDelayedAction';
 
 export default function Footer() {
   const { theme, toggleTheme } = useAppStore();
+  const { isDelayed, executeDelayed } = useDelayedAction(2000);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -15,6 +17,10 @@ export default function Footer() {
   if (!mounted) {
     return null;
   }
+
+  const handleToggle = () => {
+    executeDelayed(() => toggleTheme());
+  };
 
   return (
     <footer
@@ -75,16 +81,19 @@ export default function Footer() {
         </li>
         <li className="md:ml-4 md:pl-4 border-l" style={{ borderColor: 'var(--glass-border)' }}>
           <button
-            onClick={toggleTheme}
+            onClick={handleToggle}
+            disabled={isDelayed}
             className="font-mono text-xs uppercase tracking-widest px-3 py-1 rounded border transition-all duration-500 hover:scale-105 active:scale-95"
             style={{
               borderColor: theme === 'light' ? '#cbd5e1' : 'var(--glass-border)',
               color: theme === 'light' ? '#0d1117' : '#00d9ff',
               backgroundColor: theme === 'light' ? 'rgba(242, 246, 252, 0.8)' : 'rgba(0, 217, 255, 0.1)',
+              opacity: isDelayed ? 0.7 : 1,
+              cursor: isDelayed ? 'not-allowed' : 'pointer',
             }}
             title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
           >
-            {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
+            {isDelayed ? 'Loading...' : (theme === 'light' ? '🌙 Dark' : '☀️ Light')}
           </button>
         </li>
       </ul>

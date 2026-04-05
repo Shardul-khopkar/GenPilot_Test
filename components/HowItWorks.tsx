@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
+import { animationVariants, viewportConfig } from '@/lib/animations';
 
 interface StepData {
   number: string;
@@ -13,19 +15,24 @@ interface HowItWorksProps {
   steps?: StepData[];
 }
 
-const StepCard: React.FC<{ number: string; title: string; description: string; isDark: boolean }> = ({
+const StepCard: React.FC<{ number: string; title: string; description: string; isDark: boolean; index: number }> = ({
   number,
   title,
   description,
   isDark,
+  index,
 }) => {
   const hoverBg = isDark ? 'rgba(20, 30, 80, 0.4)' : 'rgba(255, 255, 255, 0.75)';
   const hoverBorder = isDark ? 'rgba(0, 102, 255, 0.4)' : 'rgba(0, 82, 204, 0.35)';
   const hoverShadow = isDark ? '0 8px 30px rgba(0, 102, 255, 0.2)' : '0 8px 30px rgba(0, 82, 204, 0.15)';
   const normalShadow = isDark ? '0 4px 20px rgba(0, 102, 255, 0.1)' : '0 4px 20px rgba(0, 82, 204, 0.08)';
-  
+
   return (
-    <div
+    <motion.div
+      variants={animationVariants.fadeInUp}
+      initial="hidden"
+      whileInView="visible"
+      viewport={viewportConfig}
       className="p-6 md:p-8 lg:p-10 relative reveal transition-all duration-300 hover:cursor-default"
       style={{
         background: 'var(--glass-bg)',
@@ -70,7 +77,7 @@ const StepCard: React.FC<{ number: string; title: string; description: string; i
         }}>
         {description}
       </p>
-    </div>
+    </motion.div>
   );
 };
 
@@ -158,6 +165,7 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
               title={step.title}
               description={step.description}
               isDark={isDark}
+              index={index}
             />
           ))}
         </div>

@@ -3,10 +3,12 @@
 import React, { useTransition, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/lib/store';
+import { useDelayedAction } from '@/lib/useDelayedAction';
 
 const CTA: React.FC = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const { isDelayed, executeDelayed } = useDelayedAction(2000);
   const { theme } = useAppStore();
   const [mounted, setMounted] = useState(false);
 
@@ -19,11 +21,15 @@ const CTA: React.FC = () => {
   const isDark = theme === 'dark';
 
   const handleRequestAccess = () => {
-    startTransition(() => router.push('/request-access'));
+    executeDelayed(() => {
+      startTransition(() => router.push('/request-access'));
+    });
   };
 
   const handleContact = () => {
-    startTransition(() => router.push('/contact'));
+    executeDelayed(() => {
+      startTransition(() => router.push('/contact'));
+    });
   };
 
   return (
@@ -81,7 +87,7 @@ const CTA: React.FC = () => {
         <div className="flex flex-col md:flex-row gap-3 md:gap-4 justify-center">
           <button
             onClick={handleRequestAccess}
-            disabled={isPending}
+            disabled={isPending || isDelayed}
             className="btn btn-primary w-full md:w-auto transition-all duration-500"
             style={{
               padding: '14px 24px',
@@ -90,19 +96,19 @@ const CTA: React.FC = () => {
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               fontWeight: 600,
-              opacity: isPending ? 0.7 : 1,
-              cursor: isPending ? 'not-allowed' : 'pointer',
+              opacity: isPending || isDelayed ? 0.7 : 1,
+              cursor: isPending || isDelayed ? 'not-allowed' : 'pointer',
               background: isDark
                 ? 'linear-gradient(135deg, #0066ff 0%, #00d9ff 100%)'
                 : 'linear-gradient(135deg, #0052cc 0%, #0099bb 100%)',
               color: '#ffffff',
               border: 'none',
             }}>
-            {isPending ? 'Loading...' : 'Request Early Access'}
+            {isPending || isDelayed ? 'Loading...' : 'Request Early Access'}
           </button>
           <button
             onClick={handleContact}
-            disabled={isPending}
+            disabled={isPending || isDelayed}
             className="btn btn-ghost transition-all duration-500"
             style={{
               padding: '14px 28px',
@@ -111,13 +117,13 @@ const CTA: React.FC = () => {
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               fontWeight: 600,
-              opacity: isPending ? 0.7 : 1,
-              cursor: isPending ? 'not-allowed' : 'pointer',
+              opacity: isPending || isDelayed ? 0.7 : 1,
+              cursor: isPending || isDelayed ? 'not-allowed' : 'pointer',
               color: 'var(--text)',
               border: `1.5px solid ${isDark ? 'rgba(0, 217, 255, 0.3)' : 'rgba(0, 82, 204, 0.3)'}`,
               backgroundColor: isDark ? 'rgba(0, 102, 255, 0.08)' : 'rgba(0, 82, 204, 0.06)',
             }}>
-            {isPending ? 'Loading...' : 'Contact the Team'}
+            {isPending || isDelayed ? 'Loading...' : 'Contact the Team'}
           </button>
         </div>
       </div>

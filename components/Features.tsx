@@ -1,7 +1,9 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
+import { animationVariants, viewportConfig } from '@/lib/animations';
 
 interface FeatureData {
   title: string;
@@ -12,14 +14,24 @@ interface FeaturesProps {
   features?: FeatureData[];
 }
 
-const FeatureCard: React.FC<{ title: string; description: string; isDark: boolean }> = ({ title, description, isDark }) => {
+const FeatureCard: React.FC<{ title: string; description: string; isDark: boolean; index: number }> = ({ 
+  title, 
+  description, 
+  isDark,
+  index 
+}) => {
   const hoverBg = isDark ? 'rgba(20, 30, 80, 0.4)' : 'rgba(255, 255, 255, 0.75)';
   const hoverBorder = isDark ? 'rgba(0, 82, 204, 0.35)' : 'rgba(0, 82, 204, 0.35)';
   const hoverShadow = isDark ? '0 8px 35px rgba(0, 82, 204, 0.15)' : '0 8px 35px rgba(0, 82, 204, 0.15)';
   const normalShadow = isDark ? '0 4px 20px rgba(0, 82, 204, 0.08)' : '0 4px 20px rgba(0, 82, 204, 0.08)';
 
   return (
-    <div
+    <motion.div
+      variants={animationVariants.fadeInUp}
+      initial="hidden"
+      whileInView="visible"
+      whileHover={animationVariants.cardHover}
+      viewport={viewportConfig}
       className="p-6 md:p-8 rounded-xl reveal transition-all duration-300 hover:cursor-default"
       style={{
         background: 'var(--glass-bg)',
@@ -63,7 +75,7 @@ const FeatureCard: React.FC<{ title: string; description: string; isDark: boolea
         }}>
         {description}
       </p>
-    </div>
+    </motion.div>
   );
 };
 
@@ -140,7 +152,13 @@ const Features: React.FC<FeaturesProps> = ({
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
           {features.map((feature, index) => (
-            <FeatureCard key={index} title={feature.title} description={feature.description} isDark={isDark} />
+            <FeatureCard 
+              key={index} 
+              title={feature.title} 
+              description={feature.description} 
+              isDark={isDark}
+              index={index}
+            />
           ))}
         </div>
       </div>

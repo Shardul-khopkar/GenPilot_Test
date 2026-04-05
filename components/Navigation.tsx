@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/lib/store';
 import { useEffect } from 'react';
+import SkyToggle from './ui/sky-toggle';
 
 const Navigation: React.FC = () => {
   const router = useRouter();
@@ -63,12 +64,12 @@ const Navigation: React.FC = () => {
         className="text-lg md:text-xl font-bold transition-opacity hover:opacity-80 cursor-pointer flex-shrink-0 bg-none border-none p-0"
         style={{ color: 'var(--text)' }}
       >
-        Gen<span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold', opacity: 0.7 }}>Pilot</span>
+        Gen<span style={{ color: 'var(--accent-cyan)', fontWeight: 'bold', opacity: 1 }}>Pilot</span>
       </button>
 
       <button
         onClick={() => setIsMenuOpen(!isMenuOpen)}
-        className="md:hidden flex flex-col gap-1.5 ml-auto mr-4"
+        className="md:hidden flex flex-col gap-1.5"
         aria-label="Toggle menu">
         <span
           className="w-5 h-0.5 transition-all"
@@ -173,23 +174,34 @@ const Navigation: React.FC = () => {
         </li>
       </ul>
 
-      <button
-        onClick={handleRequestAccess}
-        disabled={isPending}
-        className="hidden md:block font-mono text-xs uppercase tracking-widest px-6 lg:px-7 py-2.5 lg:py-3 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] flex-shrink-0 disabled:hover:shadow-none disabled:hover:translate-y-0"
-        style={{
-          background: isDark
-            ? 'linear-gradient(135deg, #0066ff 0%, #00d9ff 100%)'
-            : 'linear-gradient(135deg, #0052cc 0%, #0099bb 100%)',
-          color: isDark ? '#000' : '#fff',
-          boxShadow: isDark
-            ? '0 0 20px rgba(0, 102, 255, 0.4)'
-            : '0 0 20px rgba(0, 82, 204, 0.3)',
-          opacity: isPending ? 0.7 : 1,
-          cursor: isPending ? 'not-allowed' : 'pointer',
-        }}>
-        {isPending ? 'Loading...' : 'Request Access'}
-      </button>
+      <div className="hidden md:flex items-center gap-4 flex-shrink-0">
+        <div className="flex-shrink-0 scale-75 origin-right">
+          <SkyToggle />
+        </div>
+        <button
+          onClick={handleRequestAccess}
+          disabled={isPending}
+          className="font-mono text-xs uppercase tracking-widest px-6 lg:px-7 py-2.5 lg:py-3 rounded-lg font-semibold transition-all duration-300 hover:shadow-lg hover:translate-y-[-2px] disabled:hover:shadow-none disabled:hover:translate-y-0"
+          style={{
+            background: isDark
+              ? 'linear-gradient(135deg, #0066ff 0%, #00d9ff 100%)'
+              : 'linear-gradient(135deg, #0052cc 0%, #0099bb 100%)',
+            color: isDark ? '#000' : '#fff',
+            boxShadow: isDark
+              ? '0 0 20px rgba(0, 102, 255, 0.4)'
+              : '0 0 20px rgba(0, 82, 204, 0.3)',
+            opacity: isPending ? 0.7 : 1,
+            cursor: isPending ? 'not-allowed' : 'pointer',
+          }}>
+          {isPending ? 'Loading...' : 'Request Access'}
+        </button>
+      </div>
+
+      <div className="md:hidden flex items-center gap-2 flex-shrink-0">
+        <div className="flex-shrink-0 scale-75 origin-right">
+          <SkyToggle />
+        </div>
+      </div>
 
       {isMenuOpen && (
         <div
@@ -241,7 +253,7 @@ const Navigation: React.FC = () => {
                   setIsMenuOpen(false);
                 }}
                 disabled={isPending}
-                className="w-full font-mono text-xs uppercase tracking-widest px-4 py-3 rounded-lg font-semibold transition-all duration-300 disabled:hover:shadow-none"
+                className="w-full font-mono text-xs uppercase tracking-widest px-4 py-3 rounded-lg font-semibold transition-all duration-300"
                 style={{
                   background: isDark
                     ? 'linear-gradient(135deg, #0066ff 0%, #00d9ff 100%)'

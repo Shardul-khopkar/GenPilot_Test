@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useAppStore } from '@/lib/store';
+import { useDelayedAction } from '@/lib/useDelayedAction';
 
 type Position = 'bottom-right' | 'bottom-left' | 'top-right' | 'top-left' | 'right-center';
 
@@ -19,10 +20,16 @@ const positionStyles: Record<Position, React.CSSProperties> = {
 
 export default function FloatingThemeToggle({ position = 'bottom-right' }: FloatingThemeToggleProps) {
   const { theme, toggleTheme } = useAppStore();
+  const { isDelayed, executeDelayed } = useDelayedAction(2000);
+
+  const handleToggle = () => {
+    executeDelayed(() => toggleTheme());
+  };
 
   return (
     <button
-      onClick={toggleTheme}
+      onClick={handleToggle}
+      disabled={isDelayed}
       title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
       className="fixed w-14 h-14 rounded-full flex items-center justify-center text-2xl z-50 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
       style={{
@@ -35,6 +42,8 @@ export default function FloatingThemeToggle({ position = 'bottom-right' }: Float
         boxShadow: theme === 'light'
           ? '0 4px 20px rgba(0, 82, 204, 0.3)'
           : '0 4px 20px rgba(0, 217, 255, 0.2)',
+        opacity: isDelayed ? 0.7 : 1,
+        cursor: isDelayed ? 'not-allowed' : 'pointer',
       }}
       aria-label="Toggle theme"
     >

@@ -2,7 +2,11 @@
 
 import React, { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { useAppStore } from '@/lib/store';
+import { useDelayedAction } from '@/lib/useDelayedAction';
+import { animationVariants, springs } from '@/lib/animations';
+import { AuroraBackground } from './ui/aurora-background';
 import DnaSVG from './DnaSVG';
 
 const Hero: React.FC = () => {
@@ -10,16 +14,57 @@ const Hero: React.FC = () => {
   const { theme } = useAppStore();
   const [isPrimaryPending, startPrimaryTransition] = useTransition();
   const [isGhostPending, startGhostTransition] = useTransition();
+  const { isDelayed: isPrimaryDelayed, executeDelayed: executeDelayedPrimary } = useDelayedAction(2000);
+  const { isDelayed: isGhostDelayed, executeDelayed: executeDelayedGhost } = useDelayedAction(2000);
 
   const handlePrimaryClick = () => {
-    startPrimaryTransition(() => router.push('/request-access'));
+    executeDelayedPrimary(() => {
+      startPrimaryTransition(() => router.push('/request-access'));
+    });
   };
 
   const handleGhostClick = () => {
-    startGhostTransition(() => router.push('/how-it-works'));
+    executeDelayedGhost(() => {
+      startGhostTransition(() => router.push('/how-it-works'));
+    });
   };
 
   const isDark = theme === 'dark';
+
+  // Framer Motion variants for staggered animations
+  const containerVariants = animationVariants.containerStagger;
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: [0.34, 1.56, 0.64, 1],
+      },
+    },
+  };
+
+  const buttonVariants = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.7,
+        ease: [0.34, 1.56, 0.64, 1],
+      },
+    },
+    hover: {
+      scale: 1.05,
+      transition: { duration: 0.3 },
+    },
+    tap: {
+      scale: 0.98,
+      transition: { duration: 0.1 },
+    },
+  };
 
   return (
     <section
@@ -29,108 +74,121 @@ const Hero: React.FC = () => {
       <div
         className="absolute inset-0 pointer-events-none transition-all duration-500"
         style={{
+          zIndex: 1,
           background: isDark
-            ? `radial-gradient(ellipse 60% 60% at 20% 50%, rgba(0, 102, 255, 0.1) 0%, transparent 70%),
-               radial-gradient(ellipse 50% 70% at 80% 30%, rgba(0, 217, 255, 0.08) 0%, transparent 70%)`
-            : `radial-gradient(ellipse 60% 60% at 20% 50%, rgba(0, 82, 204, 0.08) 0%, transparent 70%),
-               radial-gradient(ellipse 50% 70% at 80% 30%, rgba(0, 153, 187, 0.06) 0%, transparent 70%)`,
+            ? `radial-gradient(ellipse 100% 100% at 15% 50%, rgba(0, 102, 255, 0.8) 0%, transparent 60%),
+               radial-gradient(ellipse 80% 100% at 85% 25%, rgba(0, 217, 255, 0.6) 0%, transparent 60%),
+               radial-gradient(ellipse 70% 70% at 50% 85%, rgba(107, 91, 250, 0.5) 0%, transparent 60%),
+               radial-gradient(ellipse 60% 60% at 80% 60%, rgba(0, 217, 255, 0.4) 0%, transparent 65%)`
+            : `radial-gradient(ellipse 100% 100% at 15% 50%, rgba(0, 82, 204, 0.65) 0%, transparent 60%),
+               radial-gradient(ellipse 80% 100% at 85% 25%, rgba(0, 153, 187, 0.55) 0%, transparent 60%),
+               radial-gradient(ellipse 70% 70% at 50% 85%, rgba(100, 76, 230, 0.45) 0%, transparent 60%),
+               radial-gradient(ellipse 60% 60% at 80% 60%, rgba(0, 153, 187, 0.35) 0%, transparent 65%)`,
         }}
       />
 
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 2 }}>
         <DnaSVG />
       </div>
 
       <div
         className="flex flex-col justify-center px-4 md:px-6 lg:px-12 py-12 md:py-20 relative z-10"
         style={{ paddingLeft: 'clamp(1rem, 5vw, 72px)', paddingRight: 'clamp(1rem, 5vw, 24px)' }}>
-        <p
-          className="font-mono text-xs uppercase tracking-widest mb-7 opacity-0"
-          style={{
-            animation: 'fadeUp 0.7s 0.2s forwards',
-            color: 'var(--primary-blue)',
-          }}>
-          AI-Powered Genetic Engineering IDE
-        </p>
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col">
+          <motion.p
+            variants={itemVariants}
+            className="font-mono text-xs uppercase tracking-widest mb-7"
+            style={{ color: 'var(--primary-blue)' }}>
+            AI-Powered Genetic Engineering IDE
+          </motion.p>
 
-        <h1
-          className="font-sans font-bold mb-7 opacity-0"
-          style={{
-            fontSize: 'clamp(3.2rem, 6vw, 5.5rem)',
-            lineHeight: 1,
-            letterSpacing: '-0.03em',
-            color: 'var(--text)',
-            animation: 'fadeUp 0.7s 0.35s forwards',
-          }}>
-          Gen<br />
-          <span
+          <motion.h1
+            variants={itemVariants}
+            className="font-sans font-bold mb-7"
             style={{
-              color: 'var(--accent-cyan)',
-              opacity: 0.65,
+              fontSize: 'clamp(3.2rem, 6vw, 5.5rem)',
+              lineHeight: 1,
+              letterSpacing: '-0.03em',
+              color: 'var(--text)',
             }}>
-            ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ Pilot
-          </span>
-        </h1>
+            Gen<br />
+            <span
+              style={{
+                color: 'var(--primary-db)',
+                opacity: 1,
+              }}>
+              ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ ‎ Pilot
+            </span>
+          </motion.h1>
 
-        <p
-          className="font-light mb-12 max-w-sm opacity-0"
-          style={{
-            fontSize: '1.05rem',
-            lineHeight: 1.65,
-            color: 'var(--text-muted)',
-            animation: 'fadeUp 0.7s 0.5s forwards',
-          }}>
-          The intelligent IDE for CRISPR researchers. FastAPI backend with BWA-MEM alignment, real-time hg19/hg38 coordinate conversion, AI-powered off-target prediction, and confidence scoring—all in one unified environment.
-        </p>
+          <motion.p
+            variants={itemVariants}
+            className="font-light mb-12 max-w-sm"
+            style={{
+              fontSize: '1.05rem',
+              lineHeight: 1.65,
+              color: 'var(--text-muted)',
+            }}>
+            The intelligent IDE for CRISPR researchers. FastAPI backend with BWA-MEM alignment, real-time hg19/hg38 coordinate conversion, AI-powered off-target prediction, and confidence scoring—all in one unified environment.
+          </motion.p>
 
-        <div
-          className="flex gap-4 items-center opacity-0"
-          style={{
-            animation: 'fadeUp 0.7s 0.65s forwards',
-          }}>
-          <button
-            onClick={handlePrimaryClick}
-            disabled={isPrimaryPending}
-            className="btn btn-primary transition-all duration-300"
-            style={{
-              padding: '14px 28px',
-              fontSize: '0.75rem',
-              fontFamily: "'Space Mono', monospace",
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              background: isDark
-                ? 'linear-gradient(135deg, #0066ff 0%, #00d9ff 100%)'
-                : 'linear-gradient(135deg, #0052cc 0%, #0099bb 100%)',
-              color: isDark ? '#000' : '#fff',
-              opacity: isPrimaryPending ? 0.7 : 1,
-              cursor: isPrimaryPending ? 'not-allowed' : 'pointer',
-              border: 'none',
-              borderRadius: '0.5rem',
-            }}>
-            {isPrimaryPending ? 'Loading...' : 'Request Early Access'}
-          </button>
-          <button
-            onClick={handleGhostClick}
-            disabled={isGhostPending}
-            className="btn btn-ghost transition-all duration-300"
-            style={{
-              padding: '14px 28px',
-              fontSize: '0.75rem',
-              fontFamily: "'Space Mono', monospace",
-              letterSpacing: '0.12em',
-              textTransform: 'uppercase',
-              fontWeight: 600,
-              background: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 82, 204, 0.1)',
-              color: isDark ? '#fff' : '#0052cc',
-              border: isDark ? '1.5px solid rgba(255, 255, 255, 0.25)' : '1.5px solid rgba(0, 82, 204, 0.25)',
-              opacity: isGhostPending ? 0.7 : 1,
-              cursor: isGhostPending ? 'not-allowed' : 'pointer',
-              borderRadius: '0.5rem',
-            }}>
-            {isGhostPending ? 'Loading...' : 'See How It Works'}
-          </button>
-        </div>
+          <motion.div
+            variants={itemVariants}
+            className="flex gap-4 items-center">
+            <motion.button
+              onClick={handlePrimaryClick}
+              disabled={isPrimaryPending || isPrimaryDelayed}
+              className="btn btn-primary"
+              variants={buttonVariants}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              style={{
+                padding: '14px 28px',
+                fontSize: '0.75rem',
+                fontFamily: "'Space Mono', monospace",
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                background: isDark
+                  ? 'linear-gradient(135deg, #0066ff 0%, #00d9ff 100%)'
+                  : 'linear-gradient(135deg, #0052cc 0%, #0099bb 100%)',
+                color: isDark ? '#000' : '#fff',
+                opacity: isPrimaryPending || isPrimaryDelayed ? 0.7 : 1,
+                cursor: isPrimaryPending || isPrimaryDelayed ? 'not-allowed' : 'pointer',
+                border: 'none',
+                borderRadius: '0.5rem',
+              }}>
+              {isPrimaryPending || isPrimaryDelayed ? 'Loading...' : 'Request Early Access'}
+            </motion.button>
+            <motion.button
+              onClick={handleGhostClick}
+              disabled={isGhostPending || isGhostDelayed}
+              className="btn btn-ghost"
+              variants={buttonVariants}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.98 }}
+              style={{
+                padding: '14px 28px',
+                fontSize: '0.75rem',
+                fontFamily: "'Space Mono', monospace",
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
+                fontWeight: 600,
+                background: isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 82, 204, 0.1)',
+                color: isDark ? '#fff' : '#0052cc',
+                border: isDark ? '1.5px solid rgba(255, 255, 255, 0.25)' : '1.5px solid rgba(0, 82, 204, 0.25)',
+                opacity: isGhostPending || isGhostDelayed ? 0.7 : 1,
+                cursor: isGhostPending || isGhostDelayed ? 'not-allowed' : 'pointer',
+                borderRadius: '0.5rem',
+              }}>
+              {isGhostPending ? 'Loading...' : 'See How It Works'}
+            </motion.button>
+          </motion.div>
+        </motion.div>
       </div>
 
       <div
