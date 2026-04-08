@@ -167,8 +167,8 @@ export default function DocsPage() {
               <ul className="feature-list">
                 <li>Real-time sequence input and validation</li>
                 <li>Interactive genome coordinate visualization</li>
-                <li>Live AI-powered suggestions and confidence scoring</li>
-                <li>Result export in multiple formats (JSON, CSV, PDF)</li>
+                <li>Integrated tool results display and analysis</li>
+                <li>Result export in multiple formats (JSON, CSV)</li>
                 <li>Dark mode with biomedical glass morphism design</li>
               </ul>
 
@@ -243,22 +243,18 @@ export default function DocsPage() {
 
             <div className="tech-section">
               <h2>Bioinformatics Engine (Python)</h2>
-              <p>Specialized bioinformatics pipeline that performs sequence alignment, coordinate conversion, PAM detection, and off-target risk estimation. Uses industry-standard alignment tools and custom ML models.</p>
+              <p>Specialized toolkit that performs sequence analysis, coordinate conversion, and prediction tasks. Handles sequence normalization, genome reference alignment, and result generation for the three core tools.</p>
               
               <p><strong>Processing Pipeline:</strong></p>
               <div className="data-flow">{`1. Sequence Normalization & Validation
 ↓
-2. Reverse Complement Check
+2. Reference Genome Analysis
 ↓
-3. BWA-MEM / Bowtie2 Alignment
+3. Coordinate Conversion (hg19 ↔ hg38)
 ↓
-4. Coordinate Conversion (hg19 ↔ hg38)
+4. Result Ranking & Analysis
 ↓
-5. PAM/Strand/Exon Analysis
-↓
-6. Off-Target Risk Scoring
-↓
-7. AI Confidence Ranking`}</div>
+5. Confidence Scoring`}</div>
 
               <p style={{marginTop: '24px'}}><strong>Key Libraries:</strong></p>
               <div className="tech-stack">

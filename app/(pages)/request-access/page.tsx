@@ -160,7 +160,7 @@ export default function RequestAccessPage() {
             <div 
               className="status-message transition-colors duration-500"
               style={{ color: 'var(--text)' }}>
-              Developing comprehensive sequence analysis and CRISPR prediction tools
+              Building three essential tools: Tindr (base pair location finder), HGtranslate (genome build converter), and Success Predictor (CRISPR analysis)
             </div>
           </div>
 

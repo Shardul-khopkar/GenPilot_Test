@@ -82,34 +82,19 @@ const FeatureCard: React.FC<{ title: string; description: string; isDark: boolea
 const Features: React.FC<FeaturesProps> = ({
   features = [
     {
-      title: 'Sequence Autocomplete',
+      title: 'Tindr - Base Pair Location',
       description:
-        'AI-powered suggestions complete known genetic motifs, reducing manual entry errors and speeding up guide RNA design.',
+        'Find exact genomic coordinates for your DNA sequences. Search the reference genome and get precise location data for both hg19 and hg38 builds.',
     },
     {
-      title: 'CRISPR Edit Prediction',
+      title: 'HGtranslate - Build Converter',
       description:
-        'Predict cut efficiency and off-target probability for any guide-target pair before committing to an experiment.',
+        'Convert genomic coordinates seamlessly between hg19 and hg38. No more manual liftover scripts or version inconsistencies.',
     },
     {
-      title: 'Assembly Cross-Reference',
+      title: 'Success Predictor - CRISPR Analysis',
       description:
-        'Seamlessly reconcile coordinates between hg19 and hg38. No more manual liftover scripts or versioning headaches.',
-    },
-    {
-      title: 'Mismatch Detection',
-      description:
-        'Automatically scan for off-target homology and warn about problematic regions in your selected genomic neighborhood.',
-    },
-    {
-      title: 'PAM Site Finding',
-      description:
-        'Instantly locate all PAM sites in a given coordinate range, filtered by CRISPR system (SpCas9, SaCas9, Cas12a, etc.).',
-    },
-    {
-      title: 'Structured Export',
-      description:
-        'Download results as JSON, CSV, or FASTA. Seamlessly integrate analysis into your pipeline and lab management systems.',
+        'Predict CRISPR editing success and understand failure factors. Get rule-based explanations of why your targets will succeed or face challenges.',
     },
   ],
 }) => {

@@ -7,8 +7,10 @@ import { useDelayedAction } from '@/lib/useDelayedAction';
 
 const CTA: React.FC = () => {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const { isDelayed, executeDelayed } = useDelayedAction(2000);
+  const [isPendingAccess, startAccessTransition] = useTransition();
+  const [isPendingContact, startContactTransition] = useTransition();
+  const { isDelayed: isAccessDelayed, executeDelayed: executeAccessDelayed } = useDelayedAction(2000);
+  const { isDelayed: isContactDelayed, executeDelayed: executeContactDelayed } = useDelayedAction(2000);
   const { theme } = useAppStore();
   const [mounted, setMounted] = useState(false);
 
@@ -21,14 +23,14 @@ const CTA: React.FC = () => {
   const isDark = theme === 'dark';
 
   const handleRequestAccess = () => {
-    executeDelayed(() => {
-      startTransition(() => router.push('/request-access'));
+    executeAccessDelayed(() => {
+      startAccessTransition(() => router.push('/request-access'));
     });
   };
 
   const handleContact = () => {
-    executeDelayed(() => {
-      startTransition(() => router.push('/contact'));
+    executeContactDelayed(() => {
+      startContactTransition(() => router.push('/contact'));
     });
   };
 
@@ -81,13 +83,13 @@ const CTA: React.FC = () => {
             maxWidth: '700px',
             margin: '0 auto 48px',
           }}>
-          GenPilot's integrated pipeline combines sequence validation, computational biology, and machine learning. Submit your gRNA and get back a fully validated edit plan with confidence scores, PAM confirmation, off-target warnings, and cross-referenced coordinates.
+          GenPilot provides three integrated tools for CRISPR research: Find genomic coordinates with Tindr, convert between genome builds with HGtranslate, and predict editing success factors with Success Predictor. Complete, coordinated, and accessible.
         </p>
 
         <div className="flex flex-col md:flex-row gap-3 md:gap-4 justify-center">
           <button
             onClick={handleRequestAccess}
-            disabled={isPending || isDelayed}
+            disabled={isPendingAccess || isAccessDelayed}
             className="btn btn-primary w-full md:w-auto transition-all duration-500"
             style={{
               padding: '14px 24px',
@@ -96,19 +98,19 @@ const CTA: React.FC = () => {
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               fontWeight: 600,
-              opacity: isPending || isDelayed ? 0.7 : 1,
-              cursor: isPending || isDelayed ? 'not-allowed' : 'pointer',
+              opacity: isPendingAccess || isAccessDelayed ? 0.7 : 1,
+              cursor: isPendingAccess || isAccessDelayed ? 'not-allowed' : 'pointer',
               background: isDark
                 ? 'linear-gradient(135deg, #0066ff 0%, #00d9ff 100%)'
                 : 'linear-gradient(135deg, #0052cc 0%, #0099bb 100%)',
               color: '#ffffff',
               border: 'none',
             }}>
-            {isPending || isDelayed ? 'Loading...' : 'Request Early Access'}
+            {isPendingAccess || isAccessDelayed ? 'Loading...' : 'Request Early Access'}
           </button>
           <button
             onClick={handleContact}
-            disabled={isPending || isDelayed}
+            disabled={isPendingContact || isContactDelayed}
             className="btn btn-ghost transition-all duration-500"
             style={{
               padding: '14px 28px',
@@ -117,13 +119,13 @@ const CTA: React.FC = () => {
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
               fontWeight: 600,
-              opacity: isPending || isDelayed ? 0.7 : 1,
-              cursor: isPending || isDelayed ? 'not-allowed' : 'pointer',
+              opacity: isPendingContact || isContactDelayed ? 0.7 : 1,
+              cursor: isPendingContact || isContactDelayed ? 'not-allowed' : 'pointer',
               color: 'var(--text)',
               border: `1.5px solid ${isDark ? 'rgba(0, 217, 255, 0.3)' : 'rgba(0, 82, 204, 0.3)'}`,
               backgroundColor: isDark ? 'rgba(0, 102, 255, 0.08)' : 'rgba(0, 82, 204, 0.06)',
             }}>
-            {isPending || isDelayed ? 'Loading...' : 'Contact the Team'}
+            {isPendingContact || isContactDelayed ? 'Loading...' : 'Contact the Team'}
           </button>
         </div>
       </div>

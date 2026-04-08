@@ -1,8 +1,9 @@
-# GenPilot Next.js Project
+# GenPilot Next.js Project - UI Layer
 
-A modern Next.js 14+ application for AI-powered CRISPR genetic engineering IDE.
+A modern Next.js 14+ frontend application for CRISPR genetic engineering tools (UI/Frontend Development Only).
 
 > 📋 **For Team Development**: See [DEVELOPMENT_PLAN.md](./DEVELOPMENT_PLAN.md) for the complete development roadmap and execution phases.
+> ⚠️ **Scope**: This repository contains **UI and frontend development only**. Backend, bioinformatics pipelines, and tool implementations are managed separately.
 
 ## Tech Stack
 
@@ -18,8 +19,8 @@ A modern Next.js 14+ application for AI-powered CRISPR genetic engineering IDE.
 - **API**: FastAPI / Node.js
 - **Database**: PostgreSQL + Redis
 - **Queue**: Celery / Bull
-- **Bioinformatics**: BWA-MEM, Bowtie2, Pyliftover
-- **ML**: PyTorch / TensorFlow
+- **Bioinformatics**: Reference genome alignment, coordinate conversion
+- **Analysis**: Scoring models and prediction engines
 
 ## Getting Started
 

@@ -19,8 +19,8 @@ export default function HowItWorksPage() {
     {
       number: '02',
       title: 'Genomic Alignment & Analysis',
-      description: 'The sequence is searched against reference genomes using alignment engines such as BWA-MEM and Bowtie2 to find the best genomic matches. The system then checks PAM compatibility, strand orientation, exon overlap, and basic off-target risk while ranking candidate matches and estimating confidence scores.',
-      tag: 'BWA-MEM, Bowtie2 & AI Ranking'
+      description: 'The sequence is searched against reference genomes to find the best genomic matches. The system analyzes compatibility with the reference, strand orientation, and other key factors while ranking results and scoring confidence.',
+      tag: 'Reference Analysis & Ranking'
     },
     {
       number: '03',
@@ -208,7 +208,7 @@ export default function HowItWorksPage() {
             Work In Progress
           </div>
           <h1 className="wip-title">How GenPilot Works</h1>
-          <p className="wip-subtitle">Discover the AI-powered workflow that transforms genetic research from weeks to days.</p>
+          <p className="wip-subtitle">Discover the integrated workflow that transforms genetic research targets into actionable analysis.</p>
 
           <div className="timeline">
             {steps.map((step, index) => (

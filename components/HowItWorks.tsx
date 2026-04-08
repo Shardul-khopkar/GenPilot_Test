@@ -93,7 +93,7 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
       number: '02',
       title: 'Genomic Alignment & Analysis',
       description:
-        'The system searches against reference genomes using BWA-MEM and Bowtie2 to find the best matches, then analyzes PAM compatibility, strand orientation, exon overlap, and off-target risk. AI ranking provides confidence estimates and flags inconsistencies.',
+        'The system searches against reference genomes to find the best matches, then analyzes PAM compatibility, strand orientation, exon overlap, and off-target risk. Results are ranked by confidence and flagged for inconsistencies.',
     },
     {
       number: '03',
@@ -153,7 +153,7 @@ const HowItWorks: React.FC<HowItWorksProps> = ({
               color: 'var(--text-muted)',
               maxWidth: '540px',
             }}>
-            GenPilot's AI pipeline takes your target sequence from raw input to a fully validated edit plan — with zero context switching.
+            GenPilot's integrated tools take your target sequence from raw input to a thoroughly analyzed result — with everything you need in one place.
           </p>
         </div>
 

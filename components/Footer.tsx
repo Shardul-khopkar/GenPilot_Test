@@ -102,7 +102,7 @@ export default function Footer() {
         className="font-mono text-xs tracking-widest text-center md:text-right transition-colors duration-500"
         style={{ color: 'var(--text-muted)' }}
       >
-        © 2025 GenPilot · All rights reserved
+        © 2026 GenPilot · All rights reserved
       </div>
     </footer>
   );

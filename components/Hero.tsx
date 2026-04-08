@@ -103,7 +103,7 @@ const Hero: React.FC = () => {
             variants={itemVariants}
             className="font-mono text-xs uppercase tracking-widest mb-7"
             style={{ color: 'var(--primary-blue)' }}>
-            AI-Powered Genetic Engineering IDE
+            Genetic Engineering Tools Suite
           </motion.p>
 
           <motion.h1
@@ -133,7 +133,7 @@ const Hero: React.FC = () => {
               lineHeight: 1.65,
               color: 'var(--text-muted)',
             }}>
-            The intelligent IDE for CRISPR researchers. FastAPI backend with BWA-MEM alignment, real-time hg19/hg38 coordinate conversion, AI-powered off-target prediction, and confidence scoring—all in one unified environment.
+            Three powerful tools for CRISPR researchers: Tindr for base pair location finding, HGtranslate for genome build conversion (hg19/hg38), and Success Predictor for editing success analysis—all unified in one platform.
           </motion.p>
 
           <motion.div
@@ -277,7 +277,7 @@ const Hero: React.FC = () => {
                 color: 'var(--accent-cyan)',
                 letterSpacing: '0.1em',
               }}>
-              BWA-MEM · hg19/hg38 · ML Ranking
+              Sequence Analysis · hg19/hg38 · Result Ranking
             </span>
           </div>
         </div>

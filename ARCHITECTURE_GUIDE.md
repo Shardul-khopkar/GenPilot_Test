@@ -1,18 +1,22 @@
-# GenPilot Next.js Application Architecture Guide
+# GenPilot Frontend Architecture Guide - UI Development Only
 
-## Executive Summary
+**SCOPE**: This document covers **frontend UI architecture only**. Backend implementation, bioinformatics pipelines, and infrastructure are separate and handled by other teams.
 
-GenPilot is a modern web application for CRISPR guide RNA sequence analysis and validation. This document explains how the current application works, its architecture, and provides planning guidance for future development on both frontend and backend.
+---
 
-## Part 1: Application Overview
+## Part 1: Application Overview - UI Layer
 
 ### Purpose
-GenPilot provides an IDE-like interface for genetic engineers to analyze CRISPR guide sequences. Users input target DNA sequences and receive comprehensive analysis including:
-- Genomic coordinate validation (hg19/hg38)
-- PAM site detection
-- Off-target risk scoring
-- Confidence scoring via machine learning
-- Multi-format export (JSON, CSV, PDF)
+GenPilot frontend provides user interfaces for 3 core genetic engineering tools:
+1. **Tindr** - Base pair location finder (genomic coordinate discovery)
+2. **HGtranslate** - Genome build converter (hg19 ↔ hg38)
+3. **Success Predictor** - CRISPR editing success/failure analysis with rule-based explanations
+
+All tools share:
+- Common sequence input components
+- Theme system (light/dark)
+- Result export functionality
+- Responsive glass morphism UI
 
 ### Current Technology Stack
 
@@ -23,15 +27,14 @@ GenPilot provides an IDE-like interface for genetic engineers to analyze CRISPR 
 - Tailwind CSS 3 (utility-first styling)
 - Custom CSS for animations and glass morphism effects
 
-**Backend (Future Implementation):**
-- FastAPI or Express.js for REST API
-- PostgreSQL for persistent storage
-- Redis for caching and async job queues
-- Python for bioinformatics processing
-
 **State Management:**
-- Zustand 4.4.0 for application state
-- localStorage persistence for theme preferences
+- Zustand 4.4.0 for application state and theme
+- localStorage persistence for user preferences
+
+**API Integration:**
+- Backend API client in `lib/api.ts` (endpoints provided by backend team)
+- Axios for HTTP requests
+- React Query for async state management
 
 ## Part 2: Frontend Architecture
 
@@ -41,35 +44,415 @@ GenPilot provides an IDE-like interface for genetic engineers to analyze CRISPR 
 genpilot-next/
 ├── app/                          # Next.js 13+ App Router
 │   ├── layout.tsx                # Root layout with global styles
-│   ├── page.tsx                  # Homepage (groups all sections)
+│   ├── page.tsx                  # Homepage
 │   └── (pages)/                  # Route group for subpages
-│       ├── request-access/       # Early access signup
-│       ├── contact/              # Company contact information
-│       ├── how-it-works/         # 4-step processing pipeline
-│       └── docs/                 # Technical documentation
+│       ├── tools/
+│       │   ├── tindr/            # Tindr tool page
+│       │   ├── hgtranslate/      # HGtranslate tool page
+│       │   └── predictor/        # Success Predictor tool page
+│       ├── how-it-works/         # Tools overview
+│       ├── docs/                 # Documentation
+│       ├── contact/              # Contact page
+│       └── request-access/       # Early access form
 ├── components/                   # Reusable React components
-│   ├── Navigation.tsx            # Fixed top nav with mobile menu
-│   ├── FloatingThemeToggle.tsx   # Persistent floating theme toggle (NEW)
-│   ├── Hero.tsx                  # Landing section with editor mockup
-│   ├── StatsStrip.tsx            # Three key metrics
-│   ├── Problem.tsx               # Problem statement section
-│   ├── HowItWorks.tsx            # Features and capabilities
-│   ├── Features.tsx              # Six main features grid
-│   ├── Proteins.tsx              # About section with stats
-│   ├── Updates.tsx               # Changelog/timeline
-│   ├── CTA.tsx                   # Call-to-action section
-│   ├── DnaSVG.tsx                # Animated DNA background
-│   ├── Loader.tsx                # DNA strand loading animation
-│   └── Footer.tsx                # Footer with links
+│   ├── Navigation.tsx            # Top nav with mobile menu
+│   ├── FloatingThemeToggle.tsx   # Persistent theme toggle
+│   ├── Footer.tsx                # Global footer
+│   ├── ui/                       # Shared UI components
+│   │   ├── SequenceInput.tsx     # Reusable sequence input
+│   │   ├── ResultsExporter.tsx   # Export functionality
+│   │   └── ParameterSelector.tsx # Build/organism selectors
+│   └── tools/                    # Tool-specific components
+│       ├── tindr/
+│       │   ├── TindrInput.tsx
+│       │   ├── TindrResults.tsx
+│       │   └── LocationVisualization.tsx
+│       ├── hgtranslate/
+│       │   ├── HGtranslateInput.tsx
+│       │   ├── CoordinateConverter.tsx
+│       │   └── ConversionResults.tsx
+│       └── predictor/
+│           ├── PredictorInput.tsx
+│           ├── SuccessScore.tsx
+│           ├── FailureAnalysis.tsx
+│           └── ReportGenerator.tsx
 ├── lib/                          # Utility functions
-│   ├── api.ts                    # Future API client setup
-│   ├── constants.ts              # Colors, text, configuration
-│   ├── hooks.ts                  # React hooks (scroll, resize, etc)
-│   └── store.ts                  # Zustand theme state with persistence
+│   ├── api.ts                    # API client for tools
+│   ├── constants.ts              # Colors, text, enums
+│   ├── hooks.ts                  # React hooks
+│   └── store.ts                  # Zustand store (theme)
 ├── styles/                       # Global CSS
-│   └── globals.css               # Animation keyframes, variables
+│   └── globals.css               # Animations, theme variables
 └── tsconfig.json                 # TypeScript configuration
 ```
+
+### Design System
+
+**Theme System:**
+- Light/dark mode with smooth 0.5s transitions
+- CSS custom properties for all colors
+- localStorage persistence
+- Hydration-safe initialization via inline script in layout
+
+**Color Palette:**
+
+Light Theme:
+- Primary Blue: #0052cc
+- Accent Cyan: #4db4d2
+- Background: #f4f7fb with light blue gradient
+- Text: #0d1117 (dark)
+- Glass: rgba(255, 255, 255, 0.75)
+
+Dark Theme:
+- Primary Blue: #0066ff
+- Accent Cyan: #00d9ff
+- Accent Yellow: #ffd700
+- Background: #000000 with dark blue gradient
+- Text: #ffffff
+- Glass: rgba(20, 30, 80, 0.25)
+
+**Typography:**
+- Display/Body: Sora (sans-serif) 300-700 weights
+- Monospace: Space Mono 400/700 (labels, code)
+
+### Component Architecture
+
+#### Shared UI Components (`components/ui/`)
+
+**SequenceInput.tsx**
+- Textarea for DNA/RNA sequence input
+- Syntax highlighting (optional)
+- Real-time validation feedback
+- Sequence format detection (FASTA, plain)
+- Copy/paste utilities
+- Character counter
+
+**ParameterSelector.tsx**
+- Organism dropdown (Human, Mouse, Rat, etc.)
+- Genome build selector (hg19, hg38)
+- Build-specific information display
+- Cascading selection logic
+
+**ResultsExporter.tsx**
+- Export format selector (JSON, CSV)
+- Download button
+- Copy results to clipboard
+- Result formatting utilities
+- Error handling for large datasets
+
+#### Tool 1: Tindr - Base Pair Location Finder
+
+**Page**: `app/(pages)/tools/tindr/page.tsx`
+
+**Components:**
+- `TindrInput.tsx` - Form for sequence + parameters
+- `TindrResults.tsx` - Results table
+- `LocationVisualization.tsx` - Coordinate display
+- `CoordinateTable.tsx` - Searchable/sortable results
+
+**User Flow:**
+1. User enters DNA sequence
+2. Selects organism (Human, etc.)
+3. Selects genome build (hg19/hg38)
+4. Clicks "Find Location"
+5. Backend processes, returns coordinates
+6. Results displayed in table + visualization
+7. User exports results
+
+**Features:**
+- Real-time sequence validation
+- Batch upload support
+- Results filtering and sorting
+- Coordinate range visualization
+- Export to JSON/CSV
+
+#### Tool 2: HGtranslate - Genome Build Converter
+
+**Page**: `app/(pages)/tools/hgtranslate/page.tsx`
+
+**Components:**
+- `HGtranslateInput.tsx` - Dual-mode input (single/batch)
+- `CoordinateConverter.tsx` - Conversion logic UI
+- `ConversionResults.tsx` - Side-by-side comparison table
+- `BatchControls.tsx` - File upload and batch processing
+
+**User Flow:**
+1. User selects source build (hg19 or hg38)
+2. User enters chromosome + coordinates
+3. User selects target build
+4. Clicks "Convert"
+5. Backend performs conversion
+6. Results shown with side-by-side comparison
+7. User can export results
+
+**Features:**
+- Single coordinate conversion
+- Batch conversion from file/textarea
+- Side-by-side build comparison
+- Conversion success indicators
+- Recent conversions history
+- Quick-swap build selection
+
+#### Tool 3: Success Predictor - CRISPR Success/Failure Analysis
+
+**Page**: `app/(pages)/tools/predictor/page.tsx`
+
+**Components:**
+- `PredictorInput.tsx` - Advanced parameter options
+- `SuccessScore.tsx` - Probability gauge/score display
+- `FailureAnalysis.tsx` - Detailed failure reasons
+- `RuleExplanation.tsx` - Interactive rule cards
+- `ReportGenerator.tsx` - PDF/JSON report generation
+
+**User Flow:**
+1. User enters DNA sequence
+2. Selects organism and build
+3. Opens advanced options (optional)
+4. Clicks "Predict Success"
+5. Backend analyzes with rule engine
+6. Results display:
+   - Success probability (0-100%)
+   - Key success factors
+   - Potential failure points
+   - Rule explanations
+7. User generates/exports report
+
+**Features:**
+- Success probability gauge
+- Rule-based explanations (interactive)
+- Detailed failure analysis
+- Visual factor breakdown
+- Report generation (PDF, JSON, CSV)
+- Comparison with other sequences
+- Historical predictions
+
+### Global Styling
+
+**globals.css contains:**
+- CSS Variables for all colors and spacing
+- Theme transitions (0.5s smooth)
+- Keyframe animations (fadeUp, pulse, etc.)
+- Glass morphism utilities
+- Button styles for themes
+- Responsive grid utilities
+- SVG noise overlay
+
+### Responsive Design
+
+- **Mobile-First**: Base styles for 320px+
+- **Breakpoints**: md (768px), lg (1024px)
+- **Flexbox/Grid**: All layouts responsive
+- **Typography**: Fluid scaling with clamp()
+- **Touch-Friendly**: 44px+ tap targets
+- **Viewport**: Proper meta tag in layout.tsx
+
+## Part 3: Routing and Pages
+
+### Main Routes
+
+**Homepage (`/`)**
+- Marketing landing page
+- All tool descriptions
+- CTA buttons linking to tool pages
+
+**Tool Pages:**
+- `/tools/tindr` - Base pair location finder
+- `/tools/hgtranslate` - Genome build converter
+- `/tools/predictor` - Success predictor analysis
+
+**Utility Pages:**
+- `/how-it-works` - Tools overview
+- `/docs` - Technical documentation
+- `/contact` - Company contact info
+- `/request-access` - Early access form
+
+### Navigation Structure
+
+```
+Homepage
+├── Tools
+│   ├── /tools/tindr
+│   ├── /tools/hgtranslate
+│   └── /tools/predictor
+├── Documentation
+│   ├── /how-it-works
+│   └── /docs
+└── Company
+    ├── /contact
+    └── /request-access
+```
+
+All navigation via Next.js client-side routing (no page reloads).
+
+## Part 4: API Integration (Frontend Only)
+
+### Backend API Assumptions
+
+Frontend assumes backend provides these endpoints:
+
+**Tindr:**
+```
+POST /api/tindr/locate
+{
+  sequence: string
+  organism: string
+  build: "hg19" | "hg38"
+}
+→ { locations: [...], statusCode: 200 }
+```
+
+**HGtranslate:**
+```
+POST /api/hgtranslate/convert
+{
+  chromosome: string
+  start: number
+  end: number
+  sourceB build: "hg19" | "hg38"
+  targetBuild: "hg19" | "hg38"
+}
+→ { converted: {...}, statusCode: 200 }
+```
+
+**Success Predictor:**
+```
+POST /api/predictor/analyze
+{
+  sequence: string
+  organism: string
+  build: "hg19" | "hg38"
+}
+→ { 
+  successScore: 0-100
+  factors: [...]
+  ruleExplanations: [...]
+  statusCode: 200 
+}
+```
+
+### Frontend API Client (`lib/api.ts`)
+
+Handles:
+- Request formatting
+- Response parsing
+- Error handling
+- Loading states
+- Type definitions for tool inputs/outputs
+- Request/response logging (dev mode)
+
+Uses React Query for:
+- Async state management
+- Automatic retries
+- Request caching
+- Loading/error states
+
+## Part 5: State Management
+
+### Zustand Store (`lib/store.ts`)
+
+```typescript
+{
+  theme: 'light' | 'dark'
+  toggleTheme: () => void
+  recentSearches: Array<{tool, input, timestamp}>
+  savedResults: Array<{id, tool, result}>
+  // Optional: user preferences
+  autoExport: boolean
+  defaultFormat: 'json' | 'csv'
+}
+```
+
+Persisted to localStorage for:
+- Theme preference
+- Recent searches
+- Saved results (optional)
+
+## Part 6: Development Workflow
+
+### Adding a New Component
+
+Create in appropriate folder:
+- Shared UI component: `components/ui/ComponentName.tsx`
+- Tool-specific: `components/tools/[tool]/ComponentName.tsx`
+
+Pattern:
+```typescript
+'use client'; // if interactive
+
+import { ComponentProps } from 'react';
+
+interface Props extends ComponentProps<'div'> {
+  // component-specific props
+}
+
+export default function ComponentName({ ...props }: Props) {
+  return (
+    <div className="...">
+      {/* content */}
+    </div>
+  );
+}
+```
+
+### Adding a New Tool Page
+
+1. Create folder: `app/(pages)/tools/[toolname]/`
+2. Create `page.tsx` with layout
+3. Create component files in `components/tools/[toolname]/`
+4. Add to Navigation.tsx menu
+5. Import API endpoint type from `lib/api.ts`
+
+### Testing UI
+
+- Responsive: Check md and lg breakpoints
+- Themes: Toggle light/dark mode
+- Accessibility: Check ARIA labels, keyboard nav
+- Performance: Check Lighthouse scores
+- Cross-browser: Test Chrome, Firefox, Safari, Edge
+
+## Part 7: Performance Considerations
+
+### Optimization Strategies
+
+1. **Code Splitting**: Dynamic imports for tool pages
+2. **Image Optimization**: Next.js Image component
+3. **CSS**: Tailwind purging + global minification
+4. **Caching**: Browser cache + React Query cache
+5. **Lazy Loading**: Intersection Observer for components below fold
+
+### Performance Budgets
+
+- Initial page load: <3 seconds
+- Tool page load: <2 seconds
+- API calls: <5 seconds (with loading UI)
+- Theme toggle: <100ms transition
+
+---
+
+## Summary
+
+This frontend-only architecture focuses on:
+- **3 Core Tools**: Tindr, HGtranslate, Success Predictor
+- **Responsive UI**: Mobile-first design, light/dark theme
+- **API Integration**: Clean client layer, backend-agnostic
+- **Code Organization**: Shared components + tool-specific modules
+- **Themeing**: Complete light/dark support with persistence
+- **Performance**: Optimized loading and rendering
+
+**UI Team Responsibilities:**
+- All component development
+- Styling and responsive design
+- Form validation (frontend)
+- Result display and export
+- Theme system
+- Navigation and routing
+
+**Backend Team Responsibilities:**
+- API endpoints (POST routes defined above)
+- Business logic and tool implementations
+- Database (if needed)
+- Error handling
+- Documentation of API contracts
 
 ### Design System
 
@@ -317,7 +700,7 @@ All navigation uses Next.js `useRouter` for client-side routing (no page reloads
    - Off-target risk estimation
 
 5. **Confidence Scoring**
-   - Machine learning model (PyTorch/TensorFlow)
+   - Scoring model (backend implementation)
    - Trained on experimental CRISPR success data
    - Score: 0-1 (1 = high confidence)
 

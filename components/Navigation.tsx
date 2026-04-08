@@ -212,7 +212,7 @@ const Navigation: React.FC = () => {
             backdropFilter: 'blur(30px)',
           }}>
           <ul className="flex flex-col gap-4 p-6 list-none">
-            <li>
+            <li className="menu-item">
               <a
                 href="#problem"
                 onClick={handleNavClick('problem')}
@@ -221,32 +221,32 @@ const Navigation: React.FC = () => {
                 Problem
               </a>
             </li>
-            <li>
+            <li className="menu-item">
               <a href="#how" onClick={handleNavClick('how')} className="font-mono text-xs uppercase tracking-widest transition-colors" style={{ color: 'var(--text-muted)' }}>
                 How it works
               </a>
             </li>
-            <li>
+            <li className="menu-item">
               <a href="#features" onClick={handleNavClick('features')} className="font-mono text-xs uppercase tracking-widest transition-colors" style={{ color: 'var(--text-muted)' }}>
                 Features
               </a>
             </li>
-            <li>
+            <li className="menu-item">
               <a href="#proteins" onClick={handleNavClick('proteins')} className="font-mono text-xs uppercase tracking-widest transition-colors" style={{ color: 'var(--text-muted)' }}>
                 Proteins
               </a>
             </li>
-            <li>
+            <li className="menu-item">
               <a href="#updates" onClick={handleNavClick('updates')} className="font-mono text-xs uppercase tracking-widest transition-colors" style={{ color: 'var(--text-muted)' }}>
                 Updates
               </a>
             </li>
-            <li>
+            <li className="menu-item">
               <Link href="/docs" onClick={() => setIsMenuOpen(false)} className="font-mono text-xs uppercase tracking-widest transition-colors" style={{ color: 'var(--text-muted)' }}>
                 Docs
               </Link>
             </li>
-            <li className="pt-4 border-t" style={{ borderColor: 'var(--glass-border)' }}>
+            <li className="menu-item pt-4 border-t" style={{ borderColor: 'var(--glass-border)' }}>
               <button
                 onClick={(e) => {
                   handleRequestAccess(e);

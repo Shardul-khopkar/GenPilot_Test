@@ -30,8 +30,8 @@ export default function RootLayout({
     <html lang="en" className={hydrated ? (theme === 'dark' ? 'dark' : '') : ''}>
       <head>
         <meta charSet="utf-8" />
-        <title>GenPilot — AI-Powered CRISPR Engineering IDE</title>
-        <meta name="description" content="Advanced genetic engineering platform with real-time sequence analysis, off-target prediction, and genome build integration." />
+        <title>GenPilot — Genetic Engineering Tools Suite</title>
+        <meta name="description" content="Three powerful tools for CRISPR research: Find base pair locations (Tindr), convert genome builds (HGtranslate), and predict editing success (Success Predictor)." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <script
           dangerouslySetInnerHTML={{

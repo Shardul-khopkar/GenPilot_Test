@@ -1,214 +1,232 @@
-# GenPilot Development Plan
+# GenPilot Frontend Development Plan - UI Only
 
-## Setup & Infrastructure
-
-### Step 1: Email & Firebase Setup
-**Priority: CRITICAL** - Foundation for all future features
-
-Deliverables:
-1. Set up Firebase project
-   - Create Firebase console account
-   - Initialize Firestore database
-   - Configure authentication (email/password, Google OAuth)
-   - Set up Cloud Storage for file uploads
-2. Configure email service
-   - Set up SendGrid or Firebase Cloud Functions for email notifications
-   - Create email templates for:
-     - Welcome emails
-     - Analysis completion notifications
-     - Error alerts
-3. Environment configuration
-   - Store Firebase credentials in .env.local
-   - Configure CORS for Firebase access
-   - Test authentication flow end-to-end
-
-Tech Stack: Firebase Console, SendGrid API, Node.js Cloud Functions
+**Scope**: This plan covers **frontend UI development only** for 3 core tools. Backend implementation, bioinformatics pipelines, and infrastructure are handled separately by other teams.
 
 ---
 
-### Step 2: Updates Management Dashboard
-**Priority: HIGH** - Enables dynamic content management
+## UI/Frontend Tools Roadmap
 
-Deliverables:
-1. Create simple HTML dashboard for Updates section
-   - Single-page app (no framework required)
-   - Form to add/edit/delete update entries
-   - Real-time data binding to Firebase
-   - Fields per update:
-     - Date
-     - Title
-     - Description
-     - Badge type (new/improve/fix)
-2. Firebase integration
-   - Connect to Firestore collection "updates"
-   - Implement CRUD operations
-   - Add authentication (admin login required)
-3. Features
-   - Add new update entry
-   - Edit existing updates
-   - Delete updates
-   - Preview updates in real-time
-   - Sync with live website automatically
+### Tool 1: Tindr - Base Pair Location Finder
+**Priority: HIGH** - Location discovery for genomic sequences
 
-Location: Create at `/admin/updates-dashboard.html`
-Tech Stack: HTML, CSS, JavaScript, Firebase SDK
+#### UI Components to Build:
+1. **Input Section**
+   - DNA sequence textarea with syntax highlighting
+   - Sequence validation feedback (real-time)
+   - File upload button for FASTA import
+   - Organism selector (Human, Mouse, etc.)
+   - Genome build selector (hg19, hg38)
+
+2. **Results Display**
+   - Genomic coordinates visualization
+   - Location results table (coordinates, strand, quality)
+   - Export functionality (JSON, CSV)
+   - Copy-to-clipboard for coordinates
+
+3. **Error Handling**
+   - Invalid sequence detection UI
+   - No results feedback
+   - Helpful error messages
 
 ---
 
-## Backend Development
+### Tool 2: HGtranslate - Genome Build Converter
+**Priority: HIGH** - hg19 ↔ hg38 coordinate conversion
 
-### Phase 1: Backend Foundation
-**Priority: CRITICAL** - Blocks frontend integration
+#### UI Components to Build:
+1. **Input Section**
+   - Chromosome selector
+   - Coordinate input fields (start, end position)
+   - Source build dropdown (hg19 → hg38 or hg38 → hg19)
+   - Batch conversion textarea
 
-Deliverables:
-1. Set up FastAPI or Express.js API server
-2. Create PostgreSQL database schema
-   - Users table
-   - Analysis results table
-   - Job queue table
-3. Implement JWT authentication
-4. Create core API endpoints:
-   - POST /api/analyze - main analysis endpoint
-   - POST /api/validate - sequence validation
-   - GET /api/results/{job_id} - fetch results
-5. Set up Redis for caching & async job queue
-6. Deploy BWA-MEM alignment tool container
-7. Pre-download reference genomes (hg19, hg38) to NVMe storage
+2. **Results Display**
+   - Converted coordinates table
+   - Side-by-side comparison (source vs. target)
+   - Conversion success/failure status per row
+   - Export converted coordinates (JSON, CSV)
 
-Tech Stack: FastAPI (Python) or Express.js (Node.js), PostgreSQL, Redis, Docker
-
----
-
-### Phase 2: Bioinformatics Pipeline
-**Priority: HIGH** - Core logic for analysis
-
-Deliverables:
-1. Sequence Validation Module
-   - Format checking (FASTA, DNA alphabet)
-   - Length validation (20bp for SpCas9)
-   - GC content analysis (40-60% target)
-
-2. Genomic Alignment
-   - Integrate BWA-MEM for fast matching
-   - Support hg19 & hg38 builds
-   - Return top matches with mismatch counts
-
-3. Coordinate Conversion
-   - Implement Pyliftover (hg19 ↔ hg38)
-   - Flag assembly gaps/problematic regions
-
-4. Feature Analysis
-   - PAM site detection (SpCas9: NGG)
-   - Strand orientation determination
-   - Exon boundary checking
-   - Off-target risk estimation
-
-5. ML Confidence Scoring
-   - Train/deploy PyTorch/TensorFlow model
-   - Target: 97%+ prediction accuracy
-   - Score: 0-1 (1 = high confidence)
-
-Tech Stack: Python, PyTorch/TensorFlow, BWA-MEM, Pyliftover
+3. **Features**
+   - Single coordinate conversion
+   - Batch upload support
+   - Conversion history/recent conversions
+   - Quick toggle between hg19 ↔ hg38
 
 ---
 
-## Frontend Development
+### Tool 3: Success Predictor AI - CRISPR Success/Failure Analysis
+**Priority: HIGH** - Editing success prediction with explanations
 
-### Phase 3: Frontend-Backend Integration
-**Priority: HIGH** - Connects user actions to analysis
-
-Deliverables:
-1. Create API client layer
-   - Submit analysis requests
-   - Handle long-running jobs
-   - Poll for results
-2. Build form inputs
+#### UI Components to Build:
+1. **Input Section**
    - Sequence textarea
-   - Organism selector
-   - Genome build dropdown
-3. Results display page
-   - Show coordinates (hg19/hg38)
-   - Display confidence scores
-   - PAM site visualization
-   - Off-target warnings
-4. Export functionality
-   - JSON export
-   - CSV export
-   - PDF report generation
-5. User authentication
-   - Login/signup flow
-   - User dashboard
-   - Analysis history
+   - Organism and build selectors
+   - Advanced options (PAM preference, strand choice)
+   - Parameter toggles for prediction features
+
+2. **Results Display**
+   - Success probability score (0-100 with visual gauge)
+   - Success/failure indicators
+   - Detailed explanation cards explaining:
+     - Why this target will succeed
+     - Why it might fail
+     - Key factors contributing to score
+   - Visual breakdown of scoring rules
+   - Off-target risk indicators
+
+3. **Features**
+   - Interactive rule explanation
+   - Print/export report (PDF, JSON)
+   - Detailed analysis comparison
+   - Formula/methodology documentation in UI
 
 ---
 
-## Deployment & DevOps
+## Frontend Development Phases
 
-### Phase 4: Deployment & Polish
-**Priority: HIGH** - Prepares for production
+### Phase 1: UI Framework & Base Structure
+**Deliverables:**
+- Create tool page layout templates
+- Build reusable input components
+- Design results display components
+- Set up form validation utilities
+- Create error boundary components
 
-Deliverables:
-1. Docker containerization
-   - Backend service Dockerfile
-   - Database Dockerfile (if needed)
-   - Docker Compose for local development
-2. Kubernetes setup (optional for scaling)
-   - Service definitions
-   - Deployment manifests
-   - Health checks
-3. CI/CD Pipeline
-   - GitHub Actions workflow
-   - Automated testing
-   - Build and deploy on merge
-4. Monitoring & Logging
-   - Error tracking (Sentry)
-   - Performance monitoring
-   - Log aggregation
-5. Security hardening
-   - SSL/HTTPS configuration
-   - Rate limiting
-   - Input validation
-   - SQL injection prevention
+**Location**: `components/tools/`
 
 ---
 
-## Execution Strategy
+### Phase 2: Tool 1 - Tindr UI
+**Deliverables:**
+- Input form for sequence and parameters
+- Results table component
+- Location visualization
+- Export functionality
+- Integration with backend API client
 
-Start Setup & Infrastructure first, then proceed with Backend and Frontend in parallel.
-
-Backend and AI teams can work simultaneously during Phase 1 & 2.
-
-Frontend integration (Phase 3) begins after backend API is ready.
-
-Deployment (Phase 4) happens after main features are complete.
-
----
-
-## Key Dependencies
-
-Backend API must be ready before frontend integration starts.
-Bioinformatics models must be trained before endpoint implementation.
-Firebase must be configured for updates dashboard and future features.
-Email setup required for user notifications and authentication flows.
+**Components to Create:**
+- `TindrInput.tsx`
+- `TindrResults.tsx`
+- `LocationVisualization.tsx`
+- `CoordinateTable.tsx`
 
 ---
 
-## Team Responsibilities
+### Phase 3: Tool 2 - HGtranslate UI
+**Deliverables:**
+- Coordinate input forms
+- Build selector interface
+- Batch conversion interface
+- Side-by-side comparison view
+- Export converter utilities
 
-Email & Firebase Setup: DevOps/Backend Lead 
-Updates Dashboard: Frontend Lead 
-Backend Foundation: Backend Team 
-Bioinformatics Pipeline: AI/ML Team 
-Frontend Integration: Frontend Team 
-Deployment & Polish: DevOps + All Teams 
+**Components to Create:**
+- `HGtranslateInput.tsx`
+- `CoordinateConverter.tsx`
+- `BatchControls.tsx`
+- `ConversionResults.tsx`
 
 ---
 
-## Success Metrics
+### Phase 4: Tool 3 - Success Predictor AI UI
+**Deliverables:**
+- Sequence input with advanced options
+- Success probability gauge/score display
+- Rule explanation cards
+- Detailed analysis breakdown
+- Report generation UI
 
-Step 1: Firebase project live with authentication working
-Step 2: Updates dashboard accessible and syncing with live site
-Phase 1: API endpoints responding correctly with proper error handling
-Phase 2: ML model achieving 97%+ accuracy on test dataset
-Phase 3: Full end-to-end analysis workflow functional
-Phase 4: Production environment stable with <99% uptime
+**Components to Create:**
+- `PredictorInput.tsx`
+- `SuccessScore.tsx`
+- `FailureAnalysis.tsx`
+- `RuleExplanation.tsx`
+- `ReportGenerator.tsx`
+
+---
+
+## UI Development Guidelines
+
+### Theme Consistency
+- All tools use the existing light/dark theme system
+- Maintain glass morphism design across all tool UIs
+- Use established color palette from `styles/globals.css`
+
+### Responsive Design
+- Desktop-first approach
+- Mobile-friendly inputs and results
+- Touch-friendly buttons and interactions
+
+### Accessibility
+- Proper ARIA labels on forms
+- Semantic HTML structure
+- Keyboard navigation support
+- Color contrast compliance
+
+### Code Organization
+- Reusable components in `components/ui/`
+- Tool-specific components in `components/tools/`
+- Shared utilities in `lib/`
+- Styling in `styles/` with Tailwind classes
+
+---
+
+## Styling & Assets
+
+All UI uses:
+- **CSS Framework**: Tailwind CSS + globals.css
+- **Animations**: Keyframes defined in `styles/globals.css`
+- **Theme Variables**: CSS custom properties (--primary-blue, etc.)
+- **Typography**: Sora font (sans-serif)
+- **Icons**: SVG components (no external icon library initially)
+
+---
+
+## File Structure for Tools
+
+```
+components/
+├── tools/
+│   ├── tindr/
+│   │   ├── TindrInput.tsx
+│   │   ├── TindrResults.tsx
+│   │   └── LocationVisualization.tsx
+│   ├── hgtranslate/
+│   │   ├── HGtranslateInput.tsx
+│   │   ├── CoordinateConverter.tsx
+│   │   └── ConversionResults.tsx
+│   ├── predictor/
+│   │   ├── PredictorInput.tsx
+│   │   ├── SuccessScore.tsx
+│   │   ├── FailureAnalysis.tsx
+│   │   └── ReportGenerator.tsx
+│   └── shared/
+│       ├── SequenceInput.tsx
+│       ├── ResultsExporter.tsx
+│       └── ParameterSelector.tsx
+```
+
+---
+
+## API Client Integration
+
+**Note**: Backend API endpoints are implemented separately. Frontend assumes these endpoints available:
+- `POST /api/tindr/locate` - Tindr tool endpoint
+- `POST /api/hgtranslate/convert` - HGtranslate tool endpoint
+- `POST /api/predictor/analyze` - Success Predictor endpoint
+
+Frontend API client utilities in `lib/api.ts` will handle these requests.
+
+---
+
+## Success Metrics (UI/Frontend)
+
+- All tool UIs fully functional and responsive
+- Tools integrate seamlessly with backend APIs
+- Clean, intuitive user experience
+- All forms have validation and error handling
+- Export functionality working for all tools
+- Theme switching works across all tool pages
+- Mobile and desktop views optimized
+- <3 second page load time for tool pages
+
