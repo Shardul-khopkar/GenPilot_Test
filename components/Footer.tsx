@@ -1,14 +1,17 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/lib/store';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import { useDelayedAction } from '@/lib/useDelayedAction';
 
 export default function Footer() {
+  const router = useRouter();
   const { theme, toggleTheme } = useAppStore();
   const { isDelayed, executeDelayed } = useDelayedAction(2000);
   const [mounted, setMounted] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     setMounted(true);
@@ -20,6 +23,10 @@ export default function Footer() {
 
   const handleToggle = () => {
     executeDelayed(() => toggleTheme());
+  };
+
+  const handleCopyrightDoubleClick = () => {
+    startTransition(() => router.push('/tools'));
   };
 
   return (
@@ -99,7 +106,8 @@ export default function Footer() {
       </ul>
 
       <div
-        className="font-mono text-xs tracking-widest text-center md:text-right transition-colors duration-500"
+        onDoubleClick={handleCopyrightDoubleClick}
+        className="font-mono text-xs tracking-widest text-center md:text-right transition-colors duration-500 cursor-pointer select-none hover:opacity-70"
         style={{ color: 'var(--text-muted)' }}
       >
         © 2026 GenPilot · All rights reserved
